@@ -1,3 +1,11 @@
+---
+title: "Layered Responsibility"
+description: "Responsabilidad en repartida por capas."
+author: "Alberto Basalo"
+url: "1-layered-responsibility.md"
+marp: true
+theme: ab
+---
 # 1 Layered Responsibility 
 
 Señales de decadencia: problemas reales de la arquitectura por capas
@@ -12,6 +20,8 @@ Señales de decadencia: problemas reales de la arquitectura por capas
 
 > Objetivo: entender el principal valor de la arquitectura por capas y los problemas que se presentan.
 
+---
+
 ## 2. CONCEPT 
 
 ### Ventajas de la arquitectura por capas:
@@ -19,7 +29,7 @@ Señales de decadencia: problemas reales de la arquitectura por capas
 - Sencillez.
 - Organización.
 - Separación de **responsabilidades**.
-
+---
 ### Problemas típicos de una arquitectura por capas:
 
 - Acoplamientos.
@@ -28,7 +38,7 @@ Señales de decadencia: problemas reales de la arquitectura por capas
 - Dominio inexpresivo.
 - Pruebas frágiles o complejas.
 - Potencialmente un _Big Ball of Mud_.
-
+---
 ## 3. CONCRETE PRACTICE 
 Partimos de un diseño de capas intencionalmente deficiente.
 
@@ -43,7 +53,7 @@ Corregir los problemas de **responsabilidad** que se encuentran en el código.
   - [ ] Centralizar respuestas de error.
 
 > Objetivo: familiarizarse con el código y sus deficiencias actuales
-
+---
 ## 4. CONCLUSIONS
 
 - La arquitectura por capas tiende a degradarse con el tiempo.
