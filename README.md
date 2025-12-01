@@ -17,3 +17,13 @@ Taller de Arquitectura de Software. Evolución desde las capas hasta hexagonal, 
 - Author: [Alberto Basalo](https://albertobasalo.dev)
 - Academy: [Academy Organization](https://aicode.academy)
 - Laboratory: [Source Repository](https://github.com/AlbertoBasaloAcademy/Cluster_Canarias-Arquitectura)    
+
+---
+
+https://github.com/Letram/Cluster_Canarias-Arquitectura/tree/1-dependency
+
+https://github.com/clsaavedra/Cluster_Canarias-Arquitectura.git
+
+https://github.com/davidverdu/astrobooking
+
+https://github.com/rrenub/Cluster_Canarias-Arquitectura/tree/0-legacy-practica
