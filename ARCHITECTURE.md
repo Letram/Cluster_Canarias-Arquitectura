@@ -109,6 +109,9 @@ Presentation Layer
 
 ```bash
 # Compilar
+mvn clean compile
+
+# Empaquetar
 mvn clean package
 
 # Ejecutar
