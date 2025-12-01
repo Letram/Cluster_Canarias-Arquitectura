@@ -23,6 +23,6 @@ public class AstroBookingsApp {
     // Start server
     server.setExecutor(null); // Use default executor
     server.start();
-    System.out.println("Server started on port 8080");
+    System.out.println("Server started at http://localhost:8080");
   }
 }

@@ -1,0 +1,32 @@
+package com.astrobookings.persistence;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.astrobookings.persistence.models.Rocket;
+
+public class RocketRepository {
+  private static final Map<String, Rocket> rockets = new HashMap<>();
+  private static int nextId = 1;
+
+  static {
+    // Pre-load one rocket
+    Rocket falcon9 = new Rocket("r1", "Falcon 9", 7, 27000.0);
+    rockets.put("r1", falcon9);
+    nextId = 2;
+  }
+
+  public List<Rocket> findAll() {
+    return new ArrayList<>(rockets.values());
+  }
+
+  public Rocket save(Rocket rocket) {
+    if (rocket.getId() == null) {
+      rocket.setId("r" + nextId++);
+    }
+    rockets.put(rocket.getId(), rocket);
+    return rocket;
+  }
+}
