@@ -1,7 +1,8 @@
 package com.astrobookings.business;
 
 import com.astrobookings.business.dtos.RocketDto;
-import com.astrobookings.persistence.RocketRepository;
+import com.astrobookings.persistence.factories.RocketRepositoryFactory;
+import com.astrobookings.persistence.interfaces.RocketRepository;
 import com.astrobookings.persistence.models.Rocket;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class RocketService {
     private final RocketRepository rocketRepository;
 
     public RocketService() {
-        this.rocketRepository = new RocketRepository();
+        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
     }
 
     public List<RocketDto> getAllRockets() {

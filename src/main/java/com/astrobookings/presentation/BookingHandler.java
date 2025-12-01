@@ -1,9 +1,6 @@
 package com.astrobookings.presentation;
 
 import com.astrobookings.business.BookingService;
-import com.astrobookings.persistence.BookingRepository;
-import com.astrobookings.persistence.FlightRepository;
-import com.astrobookings.persistence.RocketRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -17,10 +14,7 @@ public class BookingHandler extends BaseHandler {
     private final BookingService bookingService;
 
     public BookingHandler() {
-        BookingRepository bookingRepository = new BookingRepository();
-        FlightRepository flightRepository = new FlightRepository();
-        RocketRepository rocketRepository = new RocketRepository();
-        this.bookingService = new BookingService(bookingRepository, flightRepository, rocketRepository);
+        this.bookingService = new BookingService();
     }
 
     @Override

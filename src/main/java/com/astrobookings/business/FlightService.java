@@ -1,21 +1,23 @@
 package com.astrobookings.business;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.astrobookings.business.dtos.FlightDto;
-import com.astrobookings.persistence.FlightRepository;
-import com.astrobookings.persistence.RocketRepository;
+import com.astrobookings.persistence.factories.FlightRepositoryFactory;
+import com.astrobookings.persistence.factories.RocketRepositoryFactory;
+import com.astrobookings.persistence.interfaces.FlightRepository;
+import com.astrobookings.persistence.interfaces.RocketRepository;
 import com.astrobookings.persistence.models.Flight;
 import com.astrobookings.persistence.models.FlightStatus;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class FlightService {
     private final FlightRepository flightRepository;
     private final RocketRepository rocketRepository;
 
-    public FlightService(FlightRepository flightRepository, RocketRepository rocketRepository) {
-        this.flightRepository = flightRepository;
-        this.rocketRepository = rocketRepository;
+    public FlightService() {
+        this.flightRepository = FlightRepositoryFactory.getFlightRepository();
+        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
     }
 
     public List<FlightDto> getFlights(String statusFilter) {

@@ -1,28 +1,30 @@
 package com.astrobookings.business;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
 import com.astrobookings.business.dtos.BookingDto;
-import com.astrobookings.persistence.BookingRepository;
-import com.astrobookings.persistence.FlightRepository;
-import com.astrobookings.persistence.RocketRepository;
+import com.astrobookings.persistence.factories.BookingRepositoryFactory;
+import com.astrobookings.persistence.factories.FlightRepositoryFactory;
+import com.astrobookings.persistence.factories.RocketRepositoryFactory;
+import com.astrobookings.persistence.interfaces.BookingRepository;
+import com.astrobookings.persistence.interfaces.FlightRepository;
+import com.astrobookings.persistence.interfaces.RocketRepository;
 import com.astrobookings.persistence.models.Booking;
 import com.astrobookings.persistence.models.Flight;
 import com.astrobookings.persistence.models.FlightStatus;
 import com.astrobookings.persistence.models.Rocket;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final FlightRepository flightRepository;
     private final RocketRepository rocketRepository;
 
-    public BookingService(BookingRepository bookingRepository, FlightRepository flightRepository,
-                          RocketRepository rocketRepository) {
-        this.bookingRepository = bookingRepository;
-        this.flightRepository = flightRepository;
-        this.rocketRepository = rocketRepository;
+    public BookingService() {
+        this.bookingRepository = BookingRepositoryFactory.getBookingRepository();
+        this.flightRepository = FlightRepositoryFactory.getFlightRepository();
+        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
     }
 
     public BookingDto createBooking(String flightId, String passengerName) throws Exception {

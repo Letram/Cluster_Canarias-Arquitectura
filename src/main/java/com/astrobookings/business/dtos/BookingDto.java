@@ -9,7 +9,7 @@ public class BookingDto {
 
     public BookingDto() {
     }
-    
+
     public String getId() {
         return id;
     }

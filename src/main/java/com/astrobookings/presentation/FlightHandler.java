@@ -2,8 +2,6 @@ package com.astrobookings.presentation;
 
 import com.astrobookings.business.FlightService;
 import com.astrobookings.business.dtos.FlightDto;
-import com.astrobookings.persistence.FlightRepository;
-import com.astrobookings.persistence.RocketRepository;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -16,9 +14,7 @@ public class FlightHandler extends BaseHandler {
     private final FlightService flightService;
 
     public FlightHandler() {
-        FlightRepository flightRepository = new FlightRepository();
-        RocketRepository rocketRepository = new RocketRepository();
-        this.flightService = new FlightService(flightRepository, rocketRepository);
+        this.flightService = new FlightService();
     }
 
     @Override

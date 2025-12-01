@@ -3,71 +3,71 @@ package com.astrobookings.persistence.models;
 import java.time.LocalDateTime;
 
 public class Flight {
-  private String id;
-  private String rocketId;
-  private LocalDateTime departureDate;
-  private double basePrice;
-  private FlightStatus status;
-  private int minPassengers;
+    private String id;
+    private String rocketId;
+    private LocalDateTime departureDate;
+    private double basePrice;
+    private FlightStatus status;
+    private int minPassengers;
 
-  public Flight() {
-  }
+    public Flight() {
+    }
 
-  public Flight(String id, String rocketId, LocalDateTime departureDate, double basePrice, FlightStatus status,
-      int minPassengers) {
-    this.id = id;
-    this.rocketId = rocketId;
-    this.departureDate = departureDate;
-    this.basePrice = basePrice;
-    this.status = status;
-    this.minPassengers = minPassengers;
-  }
+    public Flight(String id, String rocketId, LocalDateTime departureDate, double basePrice, FlightStatus status,
+                  int minPassengers) {
+        this.id = id;
+        this.rocketId = rocketId;
+        this.departureDate = departureDate;
+        this.basePrice = basePrice;
+        this.status = status;
+        this.minPassengers = minPassengers;
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getRocketId() {
-    return rocketId;
-  }
+    public String getRocketId() {
+        return rocketId;
+    }
 
-  public void setRocketId(String rocketId) {
-    this.rocketId = rocketId;
-  }
+    public void setRocketId(String rocketId) {
+        this.rocketId = rocketId;
+    }
 
-  public LocalDateTime getDepartureDate() {
-    return departureDate;
-  }
+    public LocalDateTime getDepartureDate() {
+        return departureDate;
+    }
 
-  public void setDepartureDate(LocalDateTime departureDate) {
-    this.departureDate = departureDate;
-  }
+    public void setDepartureDate(LocalDateTime departureDate) {
+        this.departureDate = departureDate;
+    }
 
-  public double getBasePrice() {
-    return basePrice;
-  }
+    public double getBasePrice() {
+        return basePrice;
+    }
 
-  public void setBasePrice(double basePrice) {
-    this.basePrice = basePrice;
-  }
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
+    }
 
-  public FlightStatus getStatus() {
-    return status;
-  }
+    public FlightStatus getStatus() {
+        return status;
+    }
 
-  public void setStatus(FlightStatus status) {
-    this.status = status;
-  }
+    public void setStatus(FlightStatus status) {
+        this.status = status;
+    }
 
-  public int getMinPassengers() {
-    return minPassengers;
-  }
+    public int getMinPassengers() {
+        return minPassengers;
+    }
 
-  public void setMinPassengers(int minPassengers) {
-    this.minPassengers = minPassengers;
-  }
+    public void setMinPassengers(int minPassengers) {
+        this.minPassengers = minPassengers;
+    }
 }
