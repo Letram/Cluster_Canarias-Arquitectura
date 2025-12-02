@@ -1,8 +1,8 @@
-package com.astrobookings.presentation;
+package com.astrobookings.infrastructure.presentation;
 
 import com.astrobookings.domain.RocketService;
 import com.astrobookings.domain.dtos.RocketDto;
-import com.astrobookings.presentation.factories.PortFactory;
+import com.astrobookings.domain.ports.input.RocketUseCases;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -12,28 +12,34 @@ import java.util.List;
 
 public class RocketHandler extends BaseHandler {
 
-    private final RocketService rocketService = new RocketService(PortFactory.getRocketPort());
+    private final RocketUseCases rocketUseCases;
+    private HttpExchange exchange;
+
+    public RocketHandler(RocketUseCases rocketUseCases) {
+        this.rocketUseCases = rocketUseCases;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
+        this.exchange = exchange;
 
         if ("GET".equals(method)) {
-            handleGet(exchange);
+            handleGet();
         } else if ("POST".equals(method)) {
-            handlePost(exchange);
+            handlePost();
         } else {
             this.handleMethodNotAllowed(exchange);
         }
     }
 
-    private void handleGet(HttpExchange exchange) throws IOException {
+    private void handleGet() throws IOException {
         String response;
         int statusCode = 200;
 
         try {
 
-            List<RocketDto> rockets = rocketService.getAllRockets();
+            List<RocketDto> rockets = rocketUseCases.getAllRockets();
 
             response = this.objectMapper.writeValueAsString(rockets);
         } catch (Exception e) {
@@ -44,7 +50,7 @@ public class RocketHandler extends BaseHandler {
         sendResponse(exchange, statusCode, response);
     }
 
-    private void handlePost(HttpExchange exchange) throws IOException {
+    private void handlePost() throws IOException {
         String response;
         int statusCode;
 
@@ -61,7 +67,7 @@ public class RocketHandler extends BaseHandler {
                 statusCode = 400;
                 response = "{\"error\": \"" + error + "\"}";
             } else {
-                RocketDto saved = rocketService.createRocket(rocket);
+                RocketDto saved = rocketUseCases.createRocket(rocket);
                 statusCode = 201;
                 response = this.objectMapper.writeValueAsString(saved);
             }

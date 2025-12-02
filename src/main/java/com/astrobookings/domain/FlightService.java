@@ -1,15 +1,16 @@
 package com.astrobookings.domain;
 
 import com.astrobookings.domain.dtos.FlightDto;
-import com.astrobookings.domain.ports.FlightRepositoryPort;
-import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.ports.input.FlightUseCases;
+import com.astrobookings.domain.ports.output.FlightRepositoryPort;
+import com.astrobookings.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.domain.models.Flight;
 import com.astrobookings.domain.models.FlightStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class FlightService {
+public class FlightService implements FlightUseCases {
     private final FlightRepositoryPort flightRepositoryPort;
     private final RocketRepositoryPort rocketRepositoryPort;
 
@@ -18,6 +19,7 @@ public class FlightService {
         this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
+    @Override
     public List<FlightDto> getFlights(String statusFilter) {
         if (statusFilter != null && !statusFilter.isEmpty()) {
             return flightRepositoryPort.findByStatus(statusFilter).stream().map(this::flightToDto).toList();
@@ -26,6 +28,7 @@ public class FlightService {
         }
     }
 
+    @Override
     public FlightDto createFlight(FlightDto flightDto) {
 
         // dto -> model

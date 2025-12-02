@@ -1,12 +1,13 @@
 package com.astrobookings.domain;
 
 import com.astrobookings.domain.dtos.RocketDto;
-import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.ports.input.RocketUseCases;
+import com.astrobookings.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.domain.models.Rocket;
 
 import java.util.List;
 
-public class RocketService {
+public class RocketService implements RocketUseCases {
 
     private final RocketRepositoryPort rocketRepositoryPort;
 
@@ -14,12 +15,14 @@ public class RocketService {
         this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
+    @Override
     public List<RocketDto> getAllRockets() {
         List<Rocket> rockets = this.rocketRepositoryPort.findAll();
 
         return rockets.stream().map(this::rocketToDto).toList();
     }
 
+    @Override
     public RocketDto createRocket(RocketDto rocketDto) {
 
         validateRocket(rocketDto);

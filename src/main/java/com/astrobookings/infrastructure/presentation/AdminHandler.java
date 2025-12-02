@@ -1,7 +1,7 @@
-package com.astrobookings.presentation;
+package com.astrobookings.infrastructure.presentation;
 
 import com.astrobookings.domain.CancellationService;
-import com.astrobookings.presentation.factories.PortFactory;
+import com.astrobookings.infrastructure.presentation.factories.RepositoryPortFactory;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ public class AdminHandler extends BaseHandler {
     private final CancellationService cancellationService;
 
     public AdminHandler() {
-        this.cancellationService = new CancellationService(PortFactory.getFlightPort(), PortFactory.getBookingPort());
+        this.cancellationService = new CancellationService(RepositoryPortFactory.getFlightRepositoryPort(), RepositoryPortFactory.getBookingRepositoryPort());
     }
 
     @Override

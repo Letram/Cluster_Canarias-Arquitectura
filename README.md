@@ -34,3 +34,31 @@ Responsabilidad de los mapeos:
 - La composición (factoría) arma las implementaciones y las inyecta en los servicios del dominio.
 - Los modelos y los DTOs que representan contratos compartidos por presentación y servicio pueden residir en el dominio.
 - Los DTOs/estructuras específicas de persistencia o de transporte permanecen en la infraestructura.
+---
+
+# Nuevo
+
+El contenido que está en el módulo de "presentación", lo podemos mover al módulo de infraestructura, ya que la presentación es un detalle técnico. De esta forma, el dominio y los servicios no dependen de la presentación directamente, sino que lo hacen a través de puertos definidos en el dominio e implementados en infraestructura.
+¿Por qué la presentación es un detalle técnico? Porque puede cambiar con el tiempo (por ejemplo, cambiar de una interfaz web a una API REST o a una aplicación móvil) sin afectar la lógica de negocio. Al mantener la presentación en infraestructura, podemos cambiarla o reemplazarla sin impactar el dominio. Debido a esto, tiene que ir dentro de la definición de infraestructura.
+Lo que diferencia a la presentación de la persistencia es la naturaleza de sus ports. Si tuviéramos que diferenciarlas, podríamos considerar que la presentación pertenecería al INPUT (primary) y la persistencia como OUTPUT (secondary). Pero ambas son detalles técnicos y, por lo tanto, deben residir en infraestructura.
+También se conocen los INPUTS como "drivers" y los OUTPUTS como "driven". La presentación es un driver porque inicia la interacción con el usuario, mientras que la persistencia es driven porque responde a las solicitudes del dominio para almacenar o recuperar datos.
+
+Los enchufes (o ports) del dominio, a veces se crean usando una capa intermedia entre el dominio y la infraestructura, llamada "aplicación" o "servicios de aplicación". Esta capa puede definir casos de uso específicos que orquestan la lógica del dominio y exponen puertos para la presentación y la persistencia. Sin embargo, la responsabilidad principal sigue siendo que el dominio no dependa de detalles técnicos, y cualquier interacción con la presentación o la persistencia se realice a través de puertos definidos en el dominio o en la capa de aplicación. Por lo que los servicios y su lógica están en la capa de aplicación, mientras que el dominio contiene las reglas de negocio puras.
+
+# Cambios
+- handlers -> interfaces en la infraestructura, que acabarán siendo adaptadores de los puertos definidos en el dominio o en la capa de aplicación.
+- Crear una capa de aplicación entre el dominio y la infraestructura.
+- La aplicación tiene que definir las interfaces de entrada.
+- Dominio: puertos de salida (repositorios, servicios externos).
+- Aplicación: puertos de entrada (casos de uso).
+- La capa de aplicación depende del dominio, pero no al revés.
+- La capa de infraestructura depende tanto del dominio como de la capa de aplicación, implementando los adaptadores necesarios para los puertos definidos en ambas capas.
+
+- En primera instancia, todos los puertos están en el dominio, luego ya se hará otro refactor para sacarlos a la capa de aplicación.
+- De forma opcional, se puede dividir la capa de infraestructura en dos subcapas: una para los adaptadores de entrada (presentación) y otra para los adaptadores de salida (persistencia). Esto ayuda a organizar mejor el código y clarificar las responsabilidades de cada parte de la infraestructura.
+- De la misma forma que en la infraestructura se pueden tener subcapas, en la capa de aplicación también se pueden tener 2 subcapas para los diferentes tipos de ports (entrada y salida)
+- Al final los métodos que van en las interfaces de los ports son los handleGet y handlePost pero con nombres representativos. A veces, la interfaz de la representación puede ser RocketHandler -> RocketUserCases (y handleGet y handlePost como sus métodos a implementar)
+- Luego ya la lógica de cada uno de los métodos de la interfaz la implementa el "adapter" o "handler" de la capa de infraestructura. 
+- La interfaz de la presentación tiene que ser implementada por el servicio
+- El handler tiene que tener dentro un rocketsusecase.
+- El servicio implementa el puerto de entrada. De esta forma, el handler usa el EntityUseCases. En el punto de inicio de la aplicación, los handlers se crean inyectándole dentro un EntityUseCasesAdapter

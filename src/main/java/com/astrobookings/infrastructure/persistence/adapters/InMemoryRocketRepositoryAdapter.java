@@ -1,6 +1,6 @@
-package com.astrobookings.infrastructure.adapters;
+package com.astrobookings.infrastructure.persistence.adapters;
 
-import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.domain.models.Rocket;
 
 import java.util.ArrayList;

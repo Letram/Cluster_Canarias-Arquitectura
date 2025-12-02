@@ -1,8 +1,8 @@
-package com.astrobookings.presentation;
+package com.astrobookings.infrastructure.presentation;
 
 import com.astrobookings.domain.FlightService;
 import com.astrobookings.domain.dtos.FlightDto;
-import com.astrobookings.presentation.factories.PortFactory;
+import com.astrobookings.domain.ports.input.FlightUseCases;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -12,10 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class FlightHandler extends BaseHandler {
-    private final FlightService flightService;
+    private final FlightUseCases flightUseCases;
 
-    public FlightHandler() {
-        this.flightService = new FlightService(PortFactory.getFlightPort(), PortFactory.getRocketPort());
+    public FlightHandler(FlightUseCases flightUseCases) {
+        this.flightUseCases = flightUseCases;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FlightHandler extends BaseHandler {
                 statusFilter = params.get("status");
             }
 
-            response = this.objectMapper.writeValueAsString(flightService.getFlights(statusFilter));
+            response = this.objectMapper.writeValueAsString(flightUseCases.getFlights(statusFilter));
         } catch (Exception e) {
             statusCode = 500;
             response = "{\"error\": \"Internal server error\"}";
@@ -68,7 +68,7 @@ public class FlightHandler extends BaseHandler {
                 statusCode = 400;
                 response = "{\"error\": \"" + error + "\"}";
             } else {
-                FlightDto saved = flightService.createFlight(flight);
+                FlightDto saved = flightUseCases.createFlight(flight);
                 response = this.objectMapper.writeValueAsString(saved);
             }
 

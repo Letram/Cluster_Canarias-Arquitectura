@@ -1,7 +1,7 @@
 package com.astrobookings.domain;
 
-import com.astrobookings.domain.ports.BookingRepositoryPort;
-import com.astrobookings.domain.ports.FlightRepositoryPort;
+import com.astrobookings.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.domain.models.Booking;
 import com.astrobookings.domain.models.Flight;
 import com.astrobookings.domain.models.FlightStatus;
