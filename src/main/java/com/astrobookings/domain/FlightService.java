@@ -1,30 +1,28 @@
-package com.astrobookings.business;
+package com.astrobookings.domain;
 
-import com.astrobookings.business.dtos.FlightDto;
-import com.astrobookings.persistence.factories.FlightRepositoryFactory;
-import com.astrobookings.persistence.factories.RocketRepositoryFactory;
-import com.astrobookings.persistence.interfaces.FlightRepository;
-import com.astrobookings.persistence.interfaces.RocketRepository;
-import com.astrobookings.persistence.models.Flight;
-import com.astrobookings.persistence.models.FlightStatus;
+import com.astrobookings.domain.dtos.FlightDto;
+import com.astrobookings.domain.ports.FlightRepositoryPort;
+import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.models.Flight;
+import com.astrobookings.domain.models.FlightStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class FlightService {
-    private final FlightRepository flightRepository;
-    private final RocketRepository rocketRepository;
+    private final FlightRepositoryPort flightRepositoryPort;
+    private final RocketRepositoryPort rocketRepositoryPort;
 
-    public FlightService() {
-        this.flightRepository = FlightRepositoryFactory.getFlightRepository();
-        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
+    public FlightService(FlightRepositoryPort flightRepositoryPort, RocketRepositoryPort rocketRepositoryPort) {
+        this.flightRepositoryPort = flightRepositoryPort;
+        this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
     public List<FlightDto> getFlights(String statusFilter) {
         if (statusFilter != null && !statusFilter.isEmpty()) {
-            return flightRepository.findByStatus(statusFilter).stream().map(this::flightToDto).toList();
+            return flightRepositoryPort.findByStatus(statusFilter).stream().map(this::flightToDto).toList();
         } else {
-            return flightRepository.findAll().stream().map(this::flightToDto).toList();
+            return flightRepositoryPort.findAll().stream().map(this::flightToDto).toList();
         }
     }
 
@@ -44,7 +42,7 @@ public class FlightService {
         }
 
         // Save
-        Flight savedFlight = flightRepository.save(flight);
+        Flight savedFlight = flightRepositoryPort.save(flight);
         return flightToDto(savedFlight);
     }
 
@@ -56,7 +54,7 @@ public class FlightService {
         }
 
         // Business validations
-        if (rocketRepository.findAll().stream().noneMatch(r -> r.getId().equals(flight.getRocketId()))) {
+        if (rocketRepositoryPort.findAll().stream().noneMatch(r -> r.getId().equals(flight.getRocketId()))) {
             return "Rocket with id " + flight.getRocketId() + " does not exist";
         }
 

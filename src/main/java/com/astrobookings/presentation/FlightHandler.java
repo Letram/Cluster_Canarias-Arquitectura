@@ -1,7 +1,8 @@
 package com.astrobookings.presentation;
 
-import com.astrobookings.business.FlightService;
-import com.astrobookings.business.dtos.FlightDto;
+import com.astrobookings.domain.FlightService;
+import com.astrobookings.domain.dtos.FlightDto;
+import com.astrobookings.presentation.factories.PortFactory;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class FlightHandler extends BaseHandler {
     private final FlightService flightService;
 
     public FlightHandler() {
-        this.flightService = new FlightService();
+        this.flightService = new FlightService(PortFactory.getFlightPort(), PortFactory.getRocketPort());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.astrobookings.business.dtos;
+package com.astrobookings.domain.dtos;
 
 public class BookingDto {
     private String id;

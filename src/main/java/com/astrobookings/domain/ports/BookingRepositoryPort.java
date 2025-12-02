@@ -1,10 +1,10 @@
-package com.astrobookings.persistence.interfaces;
+package com.astrobookings.domain.ports;
 
-import com.astrobookings.persistence.models.Booking;
+import com.astrobookings.domain.models.Booking;
 
 import java.util.List;
 
-public interface BookingRepository {
+public interface BookingRepositoryPort {
     List<Booking> findAll();
 
     List<Booking> findByFlightId(String flightId);

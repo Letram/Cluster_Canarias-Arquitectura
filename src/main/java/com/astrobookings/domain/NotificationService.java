@@ -1,6 +1,6 @@
-package com.astrobookings.business;
+package com.astrobookings.domain;
 
-import com.astrobookings.persistence.models.Booking;
+import com.astrobookings.domain.models.Booking;
 
 import java.util.List;
 

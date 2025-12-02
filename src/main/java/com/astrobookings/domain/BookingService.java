@@ -1,36 +1,33 @@
-package com.astrobookings.business;
+package com.astrobookings.domain;
 
-import com.astrobookings.business.dtos.BookingDto;
-import com.astrobookings.persistence.factories.BookingRepositoryFactory;
-import com.astrobookings.persistence.factories.FlightRepositoryFactory;
-import com.astrobookings.persistence.factories.RocketRepositoryFactory;
-import com.astrobookings.persistence.interfaces.BookingRepository;
-import com.astrobookings.persistence.interfaces.FlightRepository;
-import com.astrobookings.persistence.interfaces.RocketRepository;
-import com.astrobookings.persistence.models.Booking;
-import com.astrobookings.persistence.models.Flight;
-import com.astrobookings.persistence.models.FlightStatus;
-import com.astrobookings.persistence.models.Rocket;
+import com.astrobookings.domain.dtos.BookingDto;
+import com.astrobookings.domain.ports.BookingRepositoryPort;
+import com.astrobookings.domain.ports.FlightRepositoryPort;
+import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.models.Booking;
+import com.astrobookings.domain.models.Flight;
+import com.astrobookings.domain.models.FlightStatus;
+import com.astrobookings.domain.models.Rocket;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class BookingService {
-    private final BookingRepository bookingRepository;
-    private final FlightRepository flightRepository;
-    private final RocketRepository rocketRepository;
+    private final BookingRepositoryPort bookingRepositoryPort;
+    private final FlightRepositoryPort flightRepositoryPort;
+    private final RocketRepositoryPort rocketRepositoryPort;
 
-    public BookingService() {
-        this.bookingRepository = BookingRepositoryFactory.getBookingRepository();
-        this.flightRepository = FlightRepositoryFactory.getFlightRepository();
-        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
+    public BookingService(BookingRepositoryPort bookingRepositoryPort, FlightRepositoryPort flightRepositoryPort, RocketRepositoryPort rocketRepositoryPort) {
+        this.bookingRepositoryPort = bookingRepositoryPort;
+        this.flightRepositoryPort = flightRepositoryPort;
+        this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
     public BookingDto createBooking(String flightId, String passengerName) throws Exception {
 
         // Find flight
-        Flight flight = flightRepository.findAll().stream()
+        Flight flight = flightRepositoryPort.findAll().stream()
                 .filter(f -> f.getId().equals(flightId))
                 .findFirst()
                 .orElse(null);
@@ -44,7 +41,7 @@ public class BookingService {
         }
 
         // Get rocket capacity
-        Rocket rocket = rocketRepository.findAll().stream()
+        Rocket rocket = rocketRepositoryPort.findAll().stream()
                 .filter(r -> r.getId().equals(flight.getRocketId()))
                 .findFirst()
                 .orElse(null);
@@ -54,7 +51,7 @@ public class BookingService {
         int capacity = rocket.getCapacity();
 
         // Count current bookings
-        List<Booking> existingBookings = bookingRepository.findByFlightId(flightId);
+        List<Booking> existingBookings = bookingRepositoryPort.findByFlightId(flightId);
         int currentBookings = existingBookings.size();
 
         if (currentBookings >= capacity) {
@@ -76,7 +73,7 @@ public class BookingService {
         booking.setPassengerName(passengerName);
         booking.setFinalPrice(finalPrice);
         booking.setPaymentTransactionId(transactionId);
-        Booking savedBooking = bookingRepository.save(booking);
+        Booking savedBooking = bookingRepositoryPort.save(booking);
 
         // Update flight status
         currentBookings++;
@@ -86,7 +83,7 @@ public class BookingService {
             flight.setStatus(FlightStatus.CONFIRMED);
             NotificationService.notifyConfirmation(flightId, currentBookings);
         }
-        flightRepository.save(flight);
+        flightRepositoryPort.save(flight);
 
         // Return JSON (mixing responsibility)
         return bookingToDto(savedBooking);
@@ -113,16 +110,16 @@ public class BookingService {
     public List<BookingDto> getBookings(String flightId, String passengerName) {
         List<Booking> bookings;
         if (flightId != null && !flightId.isEmpty()) {
-            bookings = bookingRepository.findByFlightId(flightId);
+            bookings = bookingRepositoryPort.findByFlightId(flightId);
             if (passengerName != null && !passengerName.isEmpty()) {
                 bookings = bookings.stream()
                         .filter(b -> b.getPassengerName().equalsIgnoreCase(passengerName))
                         .collect(java.util.stream.Collectors.toList());
             }
         } else if (passengerName != null && !passengerName.isEmpty()) {
-            bookings = bookingRepository.findByPassengerName(passengerName);
+            bookings = bookingRepositoryPort.findByPassengerName(passengerName);
         } else {
-            bookings = bookingRepository.findAll();
+            bookings = bookingRepositoryPort.findAll();
         }
 
         return bookings.stream()

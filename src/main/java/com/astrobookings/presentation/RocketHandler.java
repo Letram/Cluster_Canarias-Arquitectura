@@ -1,7 +1,8 @@
 package com.astrobookings.presentation;
 
-import com.astrobookings.business.RocketService;
-import com.astrobookings.business.dtos.RocketDto;
+import com.astrobookings.domain.RocketService;
+import com.astrobookings.domain.dtos.RocketDto;
+import com.astrobookings.presentation.factories.PortFactory;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class RocketHandler extends BaseHandler {
 
-    private final RocketService rocketService = new RocketService();
+    private final RocketService rocketService = new RocketService(PortFactory.getRocketPort());
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

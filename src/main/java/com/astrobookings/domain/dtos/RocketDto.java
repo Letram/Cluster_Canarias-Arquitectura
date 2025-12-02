@@ -1,19 +1,13 @@
-package com.astrobookings.persistence.models;
+package com.astrobookings.domain.dtos;
 
-public class Rocket {
+public class RocketDto {
+
     private String id;
     private String name;
     private int capacity;
     private Double speed;
 
-    public Rocket() {
-    }
-
-    public Rocket(String id, String name, int capacity, Double speed) {
-        this.id = id;
-        this.name = name;
-        this.capacity = capacity;
-        this.speed = speed;
+    public RocketDto() {
     }
 
     public String getId() {
@@ -47,4 +41,5 @@ public class Rocket {
     public void setSpeed(Double speed) {
         this.speed = speed;
     }
+
 }

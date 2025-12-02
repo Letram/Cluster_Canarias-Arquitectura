@@ -1,6 +1,7 @@
-package com.astrobookings.persistence;
+package com.astrobookings.infrastructure.adapters;
 
-import com.astrobookings.persistence.models.Booking;
+import com.astrobookings.domain.ports.BookingRepositoryPort;
+import com.astrobookings.domain.models.Booking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class InMemoryBookingRepository implements com.astrobookings.persistence.interfaces.BookingRepository {
+public class InMemoryBookingRepositoryAdapter implements BookingRepositoryPort {
     private static final Map<String, Booking> bookings = new HashMap<>();
     private static int nextId = 1;
 

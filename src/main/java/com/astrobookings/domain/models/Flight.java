@@ -1,10 +1,8 @@
-package com.astrobookings.business.dtos;
-
-import com.astrobookings.persistence.models.FlightStatus;
+package com.astrobookings.domain.models;
 
 import java.time.LocalDateTime;
 
-public class FlightDto {
+public class Flight {
     private String id;
     private String rocketId;
     private LocalDateTime departureDate;
@@ -12,7 +10,17 @@ public class FlightDto {
     private FlightStatus status;
     private int minPassengers;
 
-    public FlightDto() {
+    public Flight() {
+    }
+
+    public Flight(String id, String rocketId, LocalDateTime departureDate, double basePrice, FlightStatus status,
+                  int minPassengers) {
+        this.id = id;
+        this.rocketId = rocketId;
+        this.departureDate = departureDate;
+        this.basePrice = basePrice;
+        this.status = status;
+        this.minPassengers = minPassengers;
     }
 
     public String getId() {

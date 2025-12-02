@@ -1,7 +1,8 @@
-package com.astrobookings.persistence;
+package com.astrobookings.infrastructure.adapters;
 
-import com.astrobookings.persistence.models.Flight;
-import com.astrobookings.persistence.models.FlightStatus;
+import com.astrobookings.domain.ports.FlightRepositoryPort;
+import com.astrobookings.domain.models.Flight;
+import com.astrobookings.domain.models.FlightStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class InMemoryFlightRepository implements com.astrobookings.persistence.interfaces.FlightRepository {
+public class InMemoryFlightRepositoryAdapter implements FlightRepositoryPort {
     private static final Map<String, Flight> flights = new HashMap<>();
     private static int nextId;
 

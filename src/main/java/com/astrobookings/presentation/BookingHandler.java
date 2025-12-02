@@ -1,6 +1,7 @@
 package com.astrobookings.presentation;
 
-import com.astrobookings.business.BookingService;
+import com.astrobookings.domain.BookingService;
+import com.astrobookings.presentation.factories.PortFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -14,7 +15,7 @@ public class BookingHandler extends BaseHandler {
     private final BookingService bookingService;
 
     public BookingHandler() {
-        this.bookingService = new BookingService();
+        this.bookingService = new BookingService(PortFactory.getBookingPort(), PortFactory.getFlightPort(), PortFactory.getRocketPort());
     }
 
     @Override

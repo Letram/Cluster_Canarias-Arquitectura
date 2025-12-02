@@ -1,22 +1,21 @@
-package com.astrobookings.business;
+package com.astrobookings.domain;
 
-import com.astrobookings.business.dtos.RocketDto;
-import com.astrobookings.persistence.factories.RocketRepositoryFactory;
-import com.astrobookings.persistence.interfaces.RocketRepository;
-import com.astrobookings.persistence.models.Rocket;
+import com.astrobookings.domain.dtos.RocketDto;
+import com.astrobookings.domain.ports.RocketRepositoryPort;
+import com.astrobookings.domain.models.Rocket;
 
 import java.util.List;
 
 public class RocketService {
 
-    private final RocketRepository rocketRepository;
+    private final RocketRepositoryPort rocketRepositoryPort;
 
-    public RocketService() {
-        this.rocketRepository = RocketRepositoryFactory.getRocketRepository();
+    public RocketService(RocketRepositoryPort rocketRepositoryPort) {
+        this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
     public List<RocketDto> getAllRockets() {
-        List<Rocket> rockets = this.rocketRepository.findAll();
+        List<Rocket> rockets = this.rocketRepositoryPort.findAll();
 
         return rockets.stream().map(this::rocketToDto).toList();
     }
@@ -26,7 +25,7 @@ public class RocketService {
         validateRocket(rocketDto);
 
         Rocket rocket = dtoToRocket(rocketDto);
-        Rocket createdRocket = this.rocketRepository.save(rocket);
+        Rocket createdRocket = this.rocketRepositoryPort.save(rocket);
         return rocketToDto(createdRocket);
 
     }

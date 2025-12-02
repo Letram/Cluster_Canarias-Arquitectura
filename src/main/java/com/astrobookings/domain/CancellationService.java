@@ -1,28 +1,26 @@
-package com.astrobookings.business;
+package com.astrobookings.domain;
 
-import com.astrobookings.persistence.factories.BookingRepositoryFactory;
-import com.astrobookings.persistence.factories.FlightRepositoryFactory;
-import com.astrobookings.persistence.interfaces.BookingRepository;
-import com.astrobookings.persistence.interfaces.FlightRepository;
-import com.astrobookings.persistence.models.Booking;
-import com.astrobookings.persistence.models.Flight;
-import com.astrobookings.persistence.models.FlightStatus;
+import com.astrobookings.domain.ports.BookingRepositoryPort;
+import com.astrobookings.domain.ports.FlightRepositoryPort;
+import com.astrobookings.domain.models.Booking;
+import com.astrobookings.domain.models.Flight;
+import com.astrobookings.domain.models.FlightStatus;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class CancellationService {
-    private final FlightRepository flightRepository;
-    private final BookingRepository bookingRepository;
+    private final FlightRepositoryPort flightRepositoryPort;
+    private final BookingRepositoryPort bookingRepositoryPort;
 
-    public CancellationService() {
-        this.flightRepository = FlightRepositoryFactory.getFlightRepository();
-        this.bookingRepository = BookingRepositoryFactory.getBookingRepository();
+    public CancellationService(FlightRepositoryPort flightRepositoryPort, BookingRepositoryPort bookingRepositoryPort) {
+        this.flightRepositoryPort = flightRepositoryPort;
+        this.bookingRepositoryPort = bookingRepositoryPort;
     }
 
     public String cancelFlights() throws Exception {
-        List<Flight> flights = flightRepository.findAll();
+        List<Flight> flights = flightRepositoryPort.findAll();
         int cancelledCount = 0;
         LocalDateTime now = LocalDateTime.now();
 
@@ -30,13 +28,13 @@ public class CancellationService {
             if (flight.getStatus() == FlightStatus.SCHEDULED) {
                 long daysUntilDeparture = ChronoUnit.DAYS.between(now, flight.getDepartureDate());
                 if (daysUntilDeparture <= 7) {
-                    List<Booking> bookings = bookingRepository.findByFlightId(flight.getId());
+                    List<Booking> bookings = bookingRepositoryPort.findByFlightId(flight.getId());
                     if (bookings.size() < flight.getMinPassengers()) {
                         // Cancel flight
                         System.out.println("[CANCELLATION SERVICE] Cancelling flight " + flight.getId() + " - Only "
                                 + bookings.size() + "/5 passengers, departing in " + daysUntilDeparture + " days");
                         flight.setStatus(FlightStatus.CANCELLED);
-                        flightRepository.save(flight);
+                        flightRepositoryPort.save(flight);
 
                         // Refund bookings
                         for (Booking booking : bookings) {
