@@ -1,11 +1,11 @@
 package com.astrobookings.domain;
 
 import com.astrobookings.domain.dtos.FlightDto;
+import com.astrobookings.domain.models.Flight;
+import com.astrobookings.domain.models.FlightStatus;
 import com.astrobookings.domain.ports.input.FlightUseCases;
 import com.astrobookings.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.domain.ports.output.RocketRepositoryPort;
-import com.astrobookings.domain.models.Flight;
-import com.astrobookings.domain.models.FlightStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

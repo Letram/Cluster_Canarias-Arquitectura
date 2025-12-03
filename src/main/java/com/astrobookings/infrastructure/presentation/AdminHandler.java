@@ -1,16 +1,15 @@
 package com.astrobookings.infrastructure.presentation;
 
-import com.astrobookings.domain.CancellationService;
-import com.astrobookings.infrastructure.presentation.factories.RepositoryPortFactory;
+import com.astrobookings.domain.ports.input.CancellationUseCases;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 
 public class AdminHandler extends BaseHandler {
-    private final CancellationService cancellationService;
+    private final CancellationUseCases cancellationUseCases;
 
-    public AdminHandler() {
-        this.cancellationService = new CancellationService(RepositoryPortFactory.getFlightRepositoryPort(), RepositoryPortFactory.getBookingRepositoryPort());
+    public AdminHandler(CancellationUseCases cuc) {
+        this.cancellationUseCases = cuc;
     }
 
     @Override
@@ -29,7 +28,7 @@ public class AdminHandler extends BaseHandler {
         int statusCode = 200;
 
         try {
-            response = cancellationService.cancelFlights();
+            response = cancellationUseCases.cancelFlights();
         } catch (Exception e) {
             statusCode = 500;
             response = "{\"error\": \"Internal server error\"}";

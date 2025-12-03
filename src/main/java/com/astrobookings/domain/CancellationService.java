@@ -1,16 +1,17 @@
 package com.astrobookings.domain;
 
-import com.astrobookings.domain.ports.output.BookingRepositoryPort;
-import com.astrobookings.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.domain.models.Booking;
 import com.astrobookings.domain.models.Flight;
 import com.astrobookings.domain.models.FlightStatus;
+import com.astrobookings.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.domain.ports.output.FlightRepositoryPort;
+import com.astrobookings.domain.ports.output.NotificationUseCases;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class CancellationService {
+public class CancellationService implements com.astrobookings.domain.ports.input.CancellationUseCases {
     private final FlightRepositoryPort flightRepositoryPort;
     private final BookingRepositoryPort bookingRepositoryPort;
 
@@ -19,6 +20,7 @@ public class CancellationService {
         this.bookingRepositoryPort = bookingRepositoryPort;
     }
 
+    @Override
     public String cancelFlights() throws Exception {
         List<Flight> flights = flightRepositoryPort.findAll();
         int cancelledCount = 0;
@@ -42,7 +44,7 @@ public class CancellationService {
                         }
 
                         // Notify
-                        NotificationService.notifyCancellation(flight.getId(), bookings);
+                        NotificationUseCases.notifyCancellation(flight.getId(), bookings);
                         cancelledCount++;
                     }
                 }

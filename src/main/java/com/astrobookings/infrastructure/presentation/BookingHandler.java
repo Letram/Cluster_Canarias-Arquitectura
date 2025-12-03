@@ -1,7 +1,6 @@
 package com.astrobookings.infrastructure.presentation;
 
-import com.astrobookings.domain.BookingService;
-import com.astrobookings.infrastructure.presentation.factories.RepositoryPortFactory;
+import com.astrobookings.domain.ports.input.BookingUseCases;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -12,10 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class BookingHandler extends BaseHandler {
-    private final BookingService bookingService;
 
-    public BookingHandler() {
-        this.bookingService = new BookingService(RepositoryPortFactory.getBookingRepositoryPort(), RepositoryPortFactory.getFlightRepositoryPort(), RepositoryPortFactory.getRocketRepositoryPort());
+    private final BookingUseCases bookingUseCases;
+
+    public BookingHandler(BookingUseCases bookingUseCases) {
+        this.bookingUseCases = bookingUseCases;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BookingHandler extends BaseHandler {
                 passengerName = params.get("passengerName");
             }
 
-            response = this.objectMapper.writeValueAsString(bookingService.getBookings(flightId, passengerName));
+            response = this.objectMapper.writeValueAsString(bookingUseCases.getBookings(flightId, passengerName));
         } catch (Exception e) {
             statusCode = 500;
             response = "{\"error\": \"Internal server error\"}";
@@ -76,7 +76,7 @@ public class BookingHandler extends BaseHandler {
                 statusCode = 400;
                 response = "{\"error\": \"Passenger name must be provided\"}";
             } else {
-                response = this.objectMapper.writeValueAsString(bookingService.createBooking(flightId, passengerName));
+                response = this.objectMapper.writeValueAsString(bookingUseCases.createBooking(flightId, passengerName));
             }
         } catch (IllegalArgumentException e) {
             String error = e.getMessage();

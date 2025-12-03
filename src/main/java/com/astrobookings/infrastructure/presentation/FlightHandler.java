@@ -1,6 +1,5 @@
 package com.astrobookings.infrastructure.presentation;
 
-import com.astrobookings.domain.FlightService;
 import com.astrobookings.domain.dtos.FlightDto;
 import com.astrobookings.domain.ports.input.FlightUseCases;
 import com.sun.net.httpserver.HttpExchange;

@@ -1,6 +1,5 @@
 package com.astrobookings.infrastructure.presentation;
 
-import com.astrobookings.domain.RocketService;
 import com.astrobookings.domain.dtos.RocketDto;
 import com.astrobookings.domain.ports.input.RocketUseCases;
 import com.sun.net.httpserver.HttpExchange;

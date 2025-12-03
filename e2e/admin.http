@@ -130,7 +130,7 @@ Content-Type: application/json
   "basePrice": 4000.0
 }
 
-# Create 5 bookings (replace {flightId2} with new flight ID)
+### Create 5 bookings (replace {flightId2} with new flight ID)
 # ... (repeat POST /bookings 5 times)
 
 ### Then trigger cancellation
@@ -150,7 +150,7 @@ Content-Type: application/json
   "basePrice": 4000.0
 }
 
-# Create only 2 bookings (replace {flightId3} with new flight ID)
+### Create only 2 bookings (replace {flightId3} with new flight ID)
 
 POST http://localhost:8080/bookings
 Content-Type: application/json

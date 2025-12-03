@@ -1,19 +1,21 @@
 package com.astrobookings.domain;
 
 import com.astrobookings.domain.dtos.BookingDto;
-import com.astrobookings.domain.ports.output.BookingRepositoryPort;
-import com.astrobookings.domain.ports.output.FlightRepositoryPort;
-import com.astrobookings.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.domain.models.Booking;
 import com.astrobookings.domain.models.Flight;
 import com.astrobookings.domain.models.FlightStatus;
 import com.astrobookings.domain.models.Rocket;
+import com.astrobookings.domain.ports.input.BookingUseCases;
+import com.astrobookings.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.domain.ports.output.FlightRepositoryPort;
+import com.astrobookings.domain.ports.output.NotificationUseCases;
+import com.astrobookings.domain.ports.output.RocketRepositoryPort;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class BookingService {
+public class BookingService implements BookingUseCases {
     private final BookingRepositoryPort bookingRepositoryPort;
     private final FlightRepositoryPort flightRepositoryPort;
     private final RocketRepositoryPort rocketRepositoryPort;
@@ -24,6 +26,7 @@ public class BookingService {
         this.rocketRepositoryPort = rocketRepositoryPort;
     }
 
+    @Override
     public BookingDto createBooking(String flightId, String passengerName) throws Exception {
 
         // Find flight
@@ -81,7 +84,7 @@ public class BookingService {
             flight.setStatus(FlightStatus.SOLD_OUT);
         } else if (currentBookings >= flight.getMinPassengers() && flight.getStatus() == FlightStatus.SCHEDULED) {
             flight.setStatus(FlightStatus.CONFIRMED);
-            NotificationService.notifyConfirmation(flightId, currentBookings);
+            NotificationUseCases.notifyConfirmation(flightId, currentBookings);
         }
         flightRepositoryPort.save(flight);
 
@@ -107,6 +110,7 @@ public class BookingService {
         }
     }
 
+    @Override
     public List<BookingDto> getBookings(String flightId, String passengerName) {
         List<Booking> bookings;
         if (flightId != null && !flightId.isEmpty()) {
