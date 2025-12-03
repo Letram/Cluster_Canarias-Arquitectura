@@ -62,3 +62,43 @@ Los enchufes (o ports) del dominio, a veces se crean usando una capa intermedia 
 - La interfaz de la presentación tiene que ser implementada por el servicio
 - El handler tiene que tener dentro un rocketsusecase.
 - El servicio implementa el puerto de entrada. De esta forma, el handler usa el EntityUseCases. En el punto de inicio de la aplicación, los handlers se crean inyectándole dentro un EntityUseCasesAdapter
+
+---
+
+# Domain Driven Development (DDD) y Arquitectura Hexagonal
+La Arquitectura Hexagonal y el Domain Driven Development (DDD) son dos enfoques complementarios que pueden trabajar juntos para crear aplicaciones robustas y mantenibles. A continuación, se explica cómo se relacionan y cómo se pueden integrar:
+1. Enfoque en el Dominio:
+   - Ambos enfoques ponen un fuerte énfasis en el dominio y la lógica de negocio. DDD se centra en modelar el dominio de manera precisa, mientras que la Arquitectura Hexagonal busca aislar ese dominio de los detalles técnicos.
+   - En DDD, se utilizan conceptos como entidades, agregados, servicios de dominio y repositorios para estructurar el dominio. Estos conceptos pueden ser implementados dentro del núcleo de la Arquitectura Hexagonal.
+2. Capas y Separación de Responsabilidades:
+   - La Arquitectura Hexagonal define capas claras (dominio, aplicación, infraestructura) que ayudan a separar las responsabilidades. DDD puede beneficiarse de esta separación al ubicar los modelos de dominio y la lógica de negocio en la capa de dominio.
+   - Los casos de uso definidos en DDD pueden implementarse en la capa de aplicación de la Arquitectura Hexagonal, actuando como puertos de entrada.
+3. Puertos y Adaptadores:
+   - En la Arquitectura Hexagonal, los puertos y adaptadores permiten que el dominio interactúe con el mundo exterior sin depender de detalles técnicos. DDD puede aprovechar este mecanismo para definir interfaces claras para la persistencia, la comunicación externa y la presentación.
+   - Los repositorios en DDD pueden ser implementados como adaptadores de salida en la capa de infraestructura.
+4. Lenguaje Ubicuo:
+   - DDD promueve el uso de un lenguaje ubicuo compartido entre desarrolladores y expertos en el dominio. Este lenguaje puede ser reflejado en los nombres de las clases, métodos y estructuras dentro del núcleo de la Arquitectura Hexagonal.
+5. Evolución y Mantenimiento:
+   - La combinación de DDD y Arquitectura Hexagonal facilita la evolución del sistema. A medida que cambian los requisitos del negocio, el dominio puede adaptarse sin afectar los detalles técnicos, gracias a la separación proporcionada por la Arquitectura Hexagonal.
+
+> En resumen, la Arquitectura Hexagonal proporciona una estructura sólida para implementar los principios de DDD, permitiendo que el dominio se mantenga limpio y enfocado en la lógica de negocio, mientras que DDD ofrece herramientas y conceptos para modelar ese dominio de manera efectiva. Juntos, estos enfoques pueden conducir a aplicaciones más coherentes, flexibles y fáciles de mantener.  
+
+Esta metodología y arquitectura se suele utilizar en sistemas complejos donde la lógica de negocio es crucial y se espera que evolucione con el tiempo. Al combinar DDD con la Arquitectura Hexagonal, los desarrolladores pueden crear sistemas que no solo son técnicamente sólidos, sino también alineados con las necesidades del negocio. Es decir, a proyectos grandes.
+
+Normalmente, en estos proyectos tenemos más de un dominio, por lo que podemos hablar de Supporting Domains y Bounded Contexts. Cada Bounded Context puede implementarse como un módulo o servicio separado dentro de la Arquitectura Hexagonal, manteniendo sus propios modelos de dominio, puertos y adaptadores. Esto permite una mayor modularidad y facilita la gestión de la complejidad en sistemas grandes. Los Supporting Domains son dominios que apoyan al dominio principal, y pueden tener sus propias implementaciones hexagonales, pero siempre subordinadas al dominio principal.
+
+Las diferentes relaciones entre contextos son:
+- Relaciones de dependencia: Un contexto puede depender de otro para ciertos servicios o datos.
+- Relaciones de colaboración: Contextos que trabajan juntos para lograr un objetivo común.
+- Relaciones de integración: Contextos que se integran a través de puertos y adaptadores.
+
+Por otro lado, también tenemos:
+- Customer/Supplier: Un contexto actúa como proveedor de servicios o datos para otro contexto.
+- Conformist: Un contexto adopta las reglas y modelos de otro contexto sin modificaciones.
+- Anticorruption Layer: Un contexto utiliza una capa de anticorrupción para interactuar con otro contexto sin verse afectado por sus modelos o reglas. Estas relaciones ayudan a definir cómo los diferentes contextos interactúan y colaboran dentro de un sistema más grande, manteniendo la integridad y coherencia de cada dominio.
+
+---
+
+# Pasos a realizar en esta práctica 5
+
+- Dividir el dominio en 2 subdominio: core y supportive. El core será el dominio principal (bookings) y el supportive será el que le da soporte (rockets y flights).

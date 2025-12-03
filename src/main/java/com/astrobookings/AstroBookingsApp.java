@@ -1,18 +1,20 @@
 package com.astrobookings;
 
-import com.astrobookings.domain.ports.input.BookingUseCases;
-import com.astrobookings.domain.ports.input.CancellationUseCases;
-import com.astrobookings.domain.ports.input.FlightUseCases;
-import com.astrobookings.domain.ports.input.RocketUseCases;
-import com.astrobookings.domain.ports.output.BookingRepositoryPort;
-import com.astrobookings.domain.ports.output.FlightRepositoryPort;
-import com.astrobookings.domain.ports.output.RocketRepositoryPort;
-import com.astrobookings.infrastructure.presentation.AdminHandler;
-import com.astrobookings.infrastructure.presentation.BookingHandler;
-import com.astrobookings.infrastructure.presentation.FlightHandler;
-import com.astrobookings.infrastructure.presentation.RocketHandler;
-import com.astrobookings.infrastructure.presentation.factories.RepositoryPortFactory;
-import com.astrobookings.infrastructure.presentation.factories.UseCasesFactory;
+import com.astrobookings.fleet.domain.ports.input.FlightUseCases;
+import com.astrobookings.fleet.domain.ports.input.RocketUseCases;
+import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
+import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
+import com.astrobookings.fleet.infrastructure.presentation.FlightHandler;
+import com.astrobookings.fleet.infrastructure.presentation.RocketHandler;
+import com.astrobookings.fleet.infrastructure.presentation.factories.FleetRepositoryPortFactory;
+import com.astrobookings.fleet.infrastructure.presentation.factories.FleetUseCasesFactory;
+import com.astrobookings.sales.domain.ports.input.BookingUseCases;
+import com.astrobookings.sales.domain.ports.input.CancellationUseCases;
+import com.astrobookings.sales.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.sales.infrastructure.presentation.AdminHandler;
+import com.astrobookings.sales.infrastructure.presentation.BookingHandler;
+import com.astrobookings.sales.infrastructure.presentation.factories.SalesRepositoryPortFactory;
+import com.astrobookings.sales.infrastructure.presentation.factories.SalesUseCasesFactory;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -23,14 +25,14 @@ public class AstroBookingsApp {
         // Create HTTP server on port 8080
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        RocketRepositoryPort rocketRepository = RepositoryPortFactory.getRocketRepositoryPort();
-        FlightRepositoryPort flightRepository = RepositoryPortFactory.getFlightRepositoryPort();
-        BookingRepositoryPort bookingRepository = RepositoryPortFactory.getBookingRepositoryPort();
+        RocketRepositoryPort rocketRepository = FleetRepositoryPortFactory.getRocketRepositoryPort();
+        FlightRepositoryPort flightRepository = FleetRepositoryPortFactory.getFlightRepositoryPort();
+        BookingRepositoryPort bookingRepository = SalesRepositoryPortFactory.getBookingRepositoryPort();
 
-        RocketUseCases rocketUseCases = UseCasesFactory.getRocketUseCases(rocketRepository);
-        FlightUseCases flightUseCases = UseCasesFactory.getFlightUseCases(flightRepository, rocketRepository);
-        BookingUseCases bookingUseCases = UseCasesFactory.getBookingUseCases(bookingRepository, flightRepository, rocketRepository);
-        CancellationUseCases cancellationUseCases = UseCasesFactory.getCancellationUseCases(flightRepository, bookingRepository);
+        RocketUseCases rocketUseCases = FleetUseCasesFactory.getRocketUseCases(rocketRepository);
+        FlightUseCases flightUseCases = FleetUseCasesFactory.getFlightUseCases(flightRepository, rocketRepository);
+        BookingUseCases bookingUseCases = SalesUseCasesFactory.getBookingUseCases(bookingRepository, flightRepository, rocketRepository);
+        CancellationUseCases cancellationUseCases = SalesUseCasesFactory.getCancellationUseCases(flightRepository, bookingRepository);
 
         // Register handlers for endpoints
         server.createContext("/rockets", new RocketHandler(rocketUseCases));
