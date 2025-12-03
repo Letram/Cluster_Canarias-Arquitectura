@@ -7,11 +7,12 @@ import com.astrobookings.sales.domain.CancellationService;
 import com.astrobookings.sales.domain.ports.input.BookingUseCases;
 import com.astrobookings.sales.domain.ports.input.CancellationUseCases;
 import com.astrobookings.sales.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.sales.domain.ports.output.FlightInfoProvider;
 
 public class SalesUseCasesFactory {
 
-    public static BookingUseCases getBookingUseCases(BookingRepositoryPort brp, FlightRepositoryPort frp, RocketRepositoryPort rrp) {
-        return new BookingService(brp, frp, rrp);
+    public static BookingUseCases getBookingUseCases(BookingRepositoryPort brp, FlightInfoProvider fip) {
+        return new BookingService(fip, brp);
     }
 
     public static CancellationUseCases getCancellationUseCases(FlightRepositoryPort frp, BookingRepositoryPort brp) {

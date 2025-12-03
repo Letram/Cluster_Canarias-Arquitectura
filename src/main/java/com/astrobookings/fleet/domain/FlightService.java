@@ -2,6 +2,7 @@ package com.astrobookings.fleet.domain;
 
 import com.astrobookings.fleet.domain.dtos.FlightDto;
 import com.astrobookings.fleet.domain.models.Flight;
+import com.astrobookings.fleet.domain.models.FlightPrice;
 import com.astrobookings.fleet.domain.models.FlightStatus;
 import com.astrobookings.fleet.domain.ports.input.FlightUseCases;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
@@ -52,7 +53,7 @@ public class FlightService implements FlightUseCases {
     private String validateFlight(Flight flight) {
         // Input structure validations
 
-        if (flight.getBasePrice() <= 0) {
+        if (flight.getBasePrice().getPrice() <= 0) {
             return "Base price must be positive";
         }
 
@@ -79,7 +80,7 @@ public class FlightService implements FlightUseCases {
         flightDto.setId(flight.getId());
         flightDto.setRocketId(flight.getRocketId());
         flightDto.setDepartureDate(flight.getDepartureDate());
-        flightDto.setBasePrice(flight.getBasePrice());
+        flightDto.setBasePrice(flight.getBasePrice().getPrice());
         flightDto.setMinPassengers(flight.getMinPassengers());
         flightDto.setStatus(flight.getStatus());
         return flightDto;
@@ -90,7 +91,8 @@ public class FlightService implements FlightUseCases {
         flight.setId(flightDto.getId());
         flight.setRocketId(flightDto.getRocketId());
         flight.setDepartureDate(flightDto.getDepartureDate());
-        flight.setBasePrice(flightDto.getBasePrice());
+        FlightPrice price = new FlightPrice(flightDto.getBasePrice());
+        flight.setBasePrice(price);
         flight.setMinPassengers(flightDto.getMinPassengers());
         flight.setStatus(flightDto.getStatus());
         return flight;

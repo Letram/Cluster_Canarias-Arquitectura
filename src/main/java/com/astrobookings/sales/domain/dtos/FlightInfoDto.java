@@ -1,27 +1,15 @@
-package com.astrobookings.fleet.domain.models;
+package com.astrobookings.sales.domain.dtos;
 
 import java.time.LocalDateTime;
 
-public class Flight {
+public class FlightInfoDto {
     private String id;
     private String rocketId;
     private LocalDateTime departureDate;
-    private FlightPrice basePrice;
-    private FlightStatus status;
+    private double basePrice;
+    private String status;
     private int minPassengers;
-
-    public Flight() {
-    }
-
-    public Flight(String id, String rocketId, LocalDateTime departureDate, FlightPrice basePrice, FlightStatus status,
-                  int minPassengers) {
-        this.id = id;
-        this.rocketId = rocketId;
-        this.departureDate = departureDate;
-        this.basePrice = basePrice;
-        this.status = status;
-        this.minPassengers = minPassengers;
-    }
+    private int rocketCapacity;
 
     public String getId() {
         return id;
@@ -47,20 +35,19 @@ public class Flight {
         this.departureDate = departureDate;
     }
 
-    public FlightPrice getBasePrice() {
+    public double getBasePrice() {
         return basePrice;
     }
 
-    public void setBasePrice(FlightPrice basePrice) {
-
+    public void setBasePrice(double basePrice) {
         this.basePrice = basePrice;
     }
 
-    public FlightStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(FlightStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -70,5 +57,11 @@ public class Flight {
 
     public void setMinPassengers(int minPassengers) {
         this.minPassengers = minPassengers;
+    }
+    public int getRocketCapacity() {
+        return rocketCapacity;
+    }
+    public void setRocketCapacity(int rocketCapacity) {
+        this.rocketCapacity = rocketCapacity;
     }
 }

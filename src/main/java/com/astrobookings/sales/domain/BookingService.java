@@ -6,9 +6,11 @@ import com.astrobookings.fleet.domain.models.Rocket;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.sales.domain.dtos.BookingDto;
+import com.astrobookings.sales.domain.dtos.FlightInfoDto;
 import com.astrobookings.sales.domain.models.Booking;
 import com.astrobookings.sales.domain.ports.input.BookingUseCases;
 import com.astrobookings.sales.domain.ports.output.BookingRepositoryPort;
+import com.astrobookings.sales.domain.ports.output.FlightInfoProvider;
 import com.astrobookings.sales.domain.ports.output.NotificationUseCases;
 
 import java.time.LocalDateTime;
@@ -16,42 +18,30 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class BookingService implements BookingUseCases {
+    private final FlightInfoProvider flightInfoProvider;
     private final BookingRepositoryPort bookingRepositoryPort;
-    private final FlightRepositoryPort flightRepositoryPort;
-    private final RocketRepositoryPort rocketRepositoryPort;
 
-    public BookingService(BookingRepositoryPort bookingRepositoryPort, FlightRepositoryPort flightRepositoryPort, RocketRepositoryPort rocketRepositoryPort) {
-        this.bookingRepositoryPort = bookingRepositoryPort;
-        this.flightRepositoryPort = flightRepositoryPort;
-        this.rocketRepositoryPort = rocketRepositoryPort;
+    public BookingService(FlightInfoProvider flightInfoProvider, BookingRepositoryPort brp) {
+        this.flightInfoProvider = flightInfoProvider;
+        this.bookingRepositoryPort = brp;
     }
 
     @Override
     public BookingDto createBooking(String flightId, String passengerName) throws Exception {
 
-        // Find flight
-        Flight flight = flightRepositoryPort.findAll().stream()
-                .filter(f -> f.getId().equals(flightId))
-                .findFirst()
-                .orElse(null);
-        if (flight == null) {
+        FlightInfoDto flightInfoDto = flightInfoProvider.getFlightById(flightId);
+
+        if (flightInfoDto == null) {
             throw new IllegalArgumentException("Flight not found");
         }
 
         // Check flight status
-        if (flight.getStatus() == FlightStatus.CANCELLED || flight.getStatus() == FlightStatus.SOLD_OUT) {
+        if (flightInfoProvider.isFlightCancelled(flightInfoDto.getStatus())
+                || flightInfoProvider.isFlightSoldOut(flightInfoDto.getStatus())) {
             throw new IllegalArgumentException("Flight is not available for booking");
         }
 
-        // Get rocket capacity
-        Rocket rocket = rocketRepositoryPort.findAll().stream()
-                .filter(r -> r.getId().equals(flight.getRocketId()))
-                .findFirst()
-                .orElse(null);
-        if (rocket == null) {
-            throw new IllegalArgumentException("Rocket not found");
-        }
-        int capacity = rocket.getCapacity();
+        int capacity = flightInfoDto.getRocketCapacity();
 
         // Count current bookings
         List<Booking> existingBookings = bookingRepositoryPort.findByFlightId(flightId);
@@ -62,10 +52,10 @@ public class BookingService implements BookingUseCases {
         }
 
         // Calculate discount
-        double discount = calculateDiscount(flight, currentBookings, capacity);
+        double discount = calculateDiscount(flightInfoDto, currentBookings, capacity);
 
         // Final price
-        double finalPrice = flight.getBasePrice() * (1 - discount);
+        double finalPrice = flightInfoDto.getBasePrice() * (1 - discount);
 
         // Process payment
         String transactionId = PaymentGateway.processPayment(finalPrice);
@@ -81,18 +71,17 @@ public class BookingService implements BookingUseCases {
         // Update flight status
         currentBookings++;
         if (currentBookings >= capacity) {
-            flight.setStatus(FlightStatus.SOLD_OUT);
-        } else if (currentBookings >= flight.getMinPassengers() && flight.getStatus() == FlightStatus.SCHEDULED) {
-            flight.setStatus(FlightStatus.CONFIRMED);
+            flightInfoProvider.markFlightAsSoldOut(flightId);
+        } else if (currentBookings >= flightInfoDto.getMinPassengers() && flightInfoProvider.isFlightScheduled(flightInfoDto.getStatus())) {
+            flightInfoProvider.markFlightAsConfirmed(flightId);
             NotificationUseCases.notifyConfirmation(flightId, currentBookings);
         }
-        flightRepositoryPort.save(flight);
 
         // Return JSON (mixing responsibility)
         return bookingToDto(savedBooking);
     }
 
-    private double calculateDiscount(Flight flight, int currentBookings, int capacity) {
+    private double calculateDiscount(FlightInfoDto flight, int currentBookings, int capacity) {
         LocalDateTime now = LocalDateTime.now();
         long daysUntilDeparture = ChronoUnit.DAYS.between(now, flight.getDepartureDate());
 
