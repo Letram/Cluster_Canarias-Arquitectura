@@ -1,7 +1,6 @@
 package com.astrobookings.fleet.infrastructure.persistence.adapters;
 
-import com.astrobookings.fleet.domain.models.Flight;
-import com.astrobookings.fleet.domain.models.FlightStatus;
+import com.astrobookings.fleet.domain.models.flight.*;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 
 import java.time.LocalDateTime;
@@ -19,13 +18,13 @@ public class InMemoryFlightRepositoryAdapter implements FlightRepositoryPort {
         var rocketId = "00000000-0000-0000-0000-000000000001";
         // Pre-load flights
         var flight1Id = "10000000-0000-0000-0000-000000000001";
-        Flight flight1 = new Flight(flight1Id, rocketId, LocalDateTime.of(2026, 6, 1, 10, 0),
-                1000.0, FlightStatus.SCHEDULED, 5);
+        Flight flight1 = new Flight(flight1Id, rocketId, new FlightDepartureDate(LocalDateTime.of(2026, 6, 1, 10, 0)),
+                new FlightPrice(1000.0), FlightStatus.SCHEDULED, new FlightPassengers(5));
         flights.put(flight1Id, flight1);
 
         var flight2Id = "10000000-0000-0000-0000-000000000002";
-        Flight flight2 = new Flight(flight2Id, rocketId, LocalDateTime.of(2026, 12, 1, 10, 0),
-                2000.0, FlightStatus.CANCELLED, 5);
+        Flight flight2 = new Flight(flight2Id, rocketId, new FlightDepartureDate(LocalDateTime.of(2026, 12, 1, 10, 0)),
+                new FlightPrice(2000.0), FlightStatus.CANCELLED, new FlightPassengers(5));
         flights.put(flight2Id, flight2);
 
         nextId = 3;

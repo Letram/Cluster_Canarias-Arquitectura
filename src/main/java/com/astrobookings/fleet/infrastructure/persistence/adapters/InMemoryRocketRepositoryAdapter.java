@@ -1,6 +1,8 @@
 package com.astrobookings.fleet.infrastructure.persistence.adapters;
 
-import com.astrobookings.fleet.domain.models.Rocket;
+import com.astrobookings.fleet.domain.models.rocket.Rocket;
+import com.astrobookings.fleet.domain.models.rocket.RocketCapacity;
+import com.astrobookings.fleet.domain.models.rocket.RocketSpeed;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class InMemoryRocketRepositoryAdapter implements RocketRepositoryPort {
     static {
         // Pre-load one rocket
         var rocketId = "00000000-0000-0000-0000-000000000001";
-        Rocket falcon9 = new Rocket(rocketId, "Falcon 9", 7, 27000.0);
+        Rocket falcon9 = new Rocket(rocketId, "Falcon 9", new RocketCapacity(7), new RocketSpeed(27000.0));
         rockets.put(rocketId, falcon9);
         nextId = 2;
     }

@@ -1,9 +1,7 @@
 package com.astrobookings.sales.infrastructure.persistence.adapters;
 
-import com.astrobookings.fleet.domain.models.Flight;
-import com.astrobookings.fleet.domain.models.FlightPrice;
-import com.astrobookings.fleet.domain.models.FlightStatus;
-import com.astrobookings.fleet.domain.models.Rocket;
+import com.astrobookings.fleet.domain.models.flight.*;
+import com.astrobookings.fleet.domain.models.rocket.Rocket;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.sales.domain.PaymentGateway;
@@ -111,7 +109,7 @@ public class FleetAdapter implements FlightInfoProvider {
         flightInfoDto.setId(flight.getId());
         flightInfoDto.setRocketId(flight.getRocketId());
         flightInfoDto.setDepartureDate(flight.getDepartureDate());
-        flightInfoDto.setBasePrice(flight.getBasePrice().getPrice());
+        flightInfoDto.setBasePrice(flight.getBasePrice().price());
         flightInfoDto.setStatus(flight.getStatus().name());
         flightInfoDto.setMinPassengers(flight.getMinPassengers());
 
@@ -125,12 +123,12 @@ public class FleetAdapter implements FlightInfoProvider {
         Flight flight = new Flight();
         flight.setId(flightInfoDto.getId());
         flight.setRocketId(flightInfoDto.getRocketId());
-        flight.setDepartureDate(flightInfoDto.getDepartureDate());
+        flight.setDepartureDate(new FlightDepartureDate(flightInfoDto.getDepartureDate()));
 
         FlightPrice price = new FlightPrice(flightInfoDto.getBasePrice());
         flight.setBasePrice(price);
         flight.setStatus(Enum.valueOf(FlightStatus.class, flightInfoDto.getStatus()));
-        flight.setMinPassengers(flightInfoDto.getMinPassengers());
+        flight.setMinPassengers(new FlightPassengers(flightInfoDto.getMinPassengers()));
         return flight;
     }
 }

@@ -1,14 +1,11 @@
 package com.astrobookings.fleet.domain;
 
 import com.astrobookings.fleet.domain.dtos.FlightDto;
-import com.astrobookings.fleet.domain.models.Flight;
-import com.astrobookings.fleet.domain.models.FlightPrice;
-import com.astrobookings.fleet.domain.models.FlightStatus;
+import com.astrobookings.fleet.domain.models.flight.*;
 import com.astrobookings.fleet.domain.ports.input.FlightUseCases;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class FlightService implements FlightUseCases {
@@ -37,7 +34,7 @@ public class FlightService implements FlightUseCases {
 
         // Set defaults
         flight.setStatus(FlightStatus.SCHEDULED);
-        flight.setMinPassengers(5);
+        flight.setMinPassengers(new FlightPassengers(5));
 
         // Validate
         String error = validateFlight(flight);
@@ -51,25 +48,10 @@ public class FlightService implements FlightUseCases {
     }
 
     private String validateFlight(Flight flight) {
-        // Input structure validations
-
-        if (flight.getBasePrice().getPrice() <= 0) {
-            return "Base price must be positive";
-        }
 
         // Business validations
         if (rocketRepositoryPort.findAll().stream().noneMatch(r -> r.getId().equals(flight.getRocketId()))) {
             return "Rocket with id " + flight.getRocketId() + " does not exist";
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        if (!flight.getDepartureDate().isAfter(now)) {
-            return "Departure date must be in the future";
-        }
-
-        LocalDateTime oneYearAhead = now.plusYears(1);
-        if (flight.getDepartureDate().isAfter(oneYearAhead)) {
-            return "Departure date cannot be more than 1 year ahead";
         }
 
         return null;
@@ -80,7 +62,7 @@ public class FlightService implements FlightUseCases {
         flightDto.setId(flight.getId());
         flightDto.setRocketId(flight.getRocketId());
         flightDto.setDepartureDate(flight.getDepartureDate());
-        flightDto.setBasePrice(flight.getBasePrice().getPrice());
+        flightDto.setBasePrice(flight.getBasePrice().price());
         flightDto.setMinPassengers(flight.getMinPassengers());
         flightDto.setStatus(flight.getStatus());
         return flightDto;
@@ -90,10 +72,10 @@ public class FlightService implements FlightUseCases {
         Flight flight = new Flight();
         flight.setId(flightDto.getId());
         flight.setRocketId(flightDto.getRocketId());
-        flight.setDepartureDate(flightDto.getDepartureDate());
+        flight.setDepartureDate(new FlightDepartureDate(flightDto.getDepartureDate()));
         FlightPrice price = new FlightPrice(flightDto.getBasePrice());
         flight.setBasePrice(price);
-        flight.setMinPassengers(flightDto.getMinPassengers());
+        flight.setMinPassengers(new FlightPassengers(flightDto.getMinPassengers()));
         flight.setStatus(flightDto.getStatus());
         return flight;
     }

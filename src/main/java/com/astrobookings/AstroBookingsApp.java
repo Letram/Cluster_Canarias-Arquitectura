@@ -31,7 +31,7 @@ public class AstroBookingsApp {
         FlightRepositoryPort flightRepository = FleetRepositoryPortFactory.getFlightRepositoryPort();
         BookingRepositoryPort bookingRepository = SalesRepositoryPortFactory.getBookingRepositoryPort();
 
-        FlightInfoProvider fip = SalesProvidersFactory.getFlightInfoProvider(flightRepository, rocketRepository);
+        FlightInfoProvider fip = SalesProvidersFactory.getFlightInfoProvider(flightRepository, rocketRepository, bookingRepository);
 
         RocketUseCases rocketUseCases = FleetUseCasesFactory.getRocketUseCases(rocketRepository);
         FlightUseCases flightUseCases = FleetUseCasesFactory.getFlightUseCases(flightRepository, rocketRepository);

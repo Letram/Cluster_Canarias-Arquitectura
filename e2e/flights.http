@@ -46,7 +46,8 @@ Content-Type: application/json
 {
   "rocketId": "00000000-0000-0000-0000-000000000001",
   "departureDate": "2025-12-25T10:00:00",
-  "basePrice": 1500.0
+  "basePrice": 1500.0,
+  "minPassengers": 5
 }
 
 ### Create a flight 6 months ahead (for discount testing)

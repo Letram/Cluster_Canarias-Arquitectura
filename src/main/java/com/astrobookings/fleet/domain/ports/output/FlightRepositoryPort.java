@@ -1,6 +1,6 @@
 package com.astrobookings.fleet.domain.ports.output;
 
-import com.astrobookings.fleet.domain.models.Flight;
+import com.astrobookings.fleet.domain.models.flight.Flight;
 
 import java.util.List;
 

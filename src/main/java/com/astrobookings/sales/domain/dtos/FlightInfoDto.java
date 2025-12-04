@@ -58,9 +58,11 @@ public class FlightInfoDto {
     public void setMinPassengers(int minPassengers) {
         this.minPassengers = minPassengers;
     }
+
     public int getRocketCapacity() {
         return rocketCapacity;
     }
+
     public void setRocketCapacity(int rocketCapacity) {
         this.rocketCapacity = rocketCapacity;
     }

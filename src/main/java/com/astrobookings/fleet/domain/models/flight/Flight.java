@@ -1,20 +1,20 @@
-package com.astrobookings.fleet.domain.models;
+package com.astrobookings.fleet.domain.models.flight;
 
 import java.time.LocalDateTime;
 
 public class Flight {
     private String id;
     private String rocketId;
-    private LocalDateTime departureDate;
+    private FlightDepartureDate departureDate;
     private FlightPrice basePrice;
     private FlightStatus status;
-    private int minPassengers;
+    private FlightPassengers minPassengers;
 
     public Flight() {
     }
 
-    public Flight(String id, String rocketId, LocalDateTime departureDate, FlightPrice basePrice, FlightStatus status,
-                  int minPassengers) {
+    public Flight(String id, String rocketId, FlightDepartureDate departureDate, FlightPrice basePrice, FlightStatus status,
+                  FlightPassengers minPassengers) {
         this.id = id;
         this.rocketId = rocketId;
         this.departureDate = departureDate;
@@ -40,10 +40,10 @@ public class Flight {
     }
 
     public LocalDateTime getDepartureDate() {
-        return departureDate;
+        return departureDate.value();
     }
 
-    public void setDepartureDate(LocalDateTime departureDate) {
+    public void setDepartureDate(FlightDepartureDate departureDate) {
         this.departureDate = departureDate;
     }
 
@@ -65,10 +65,10 @@ public class Flight {
     }
 
     public int getMinPassengers() {
-        return minPassengers;
+        return minPassengers.value();
     }
 
-    public void setMinPassengers(int minPassengers) {
+    public void setMinPassengers(FlightPassengers minPassengers) {
         this.minPassengers = minPassengers;
     }
 }

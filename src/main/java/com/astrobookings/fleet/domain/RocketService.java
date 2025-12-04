@@ -1,7 +1,9 @@
 package com.astrobookings.fleet.domain;
 
 import com.astrobookings.fleet.domain.dtos.RocketDto;
-import com.astrobookings.fleet.domain.models.Rocket;
+import com.astrobookings.fleet.domain.models.rocket.Rocket;
+import com.astrobookings.fleet.domain.models.rocket.RocketCapacity;
+import com.astrobookings.fleet.domain.models.rocket.RocketSpeed;
 import com.astrobookings.fleet.domain.ports.input.RocketUseCases;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 
@@ -24,27 +26,17 @@ public class RocketService implements RocketUseCases {
 
     @Override
     public RocketDto createRocket(RocketDto rocketDto) {
-
-        validateRocket(rocketDto);
-
         Rocket rocket = dtoToRocket(rocketDto);
         Rocket createdRocket = this.rocketRepositoryPort.save(rocket);
         return rocketToDto(createdRocket);
-
-    }
-
-    private void validateRocket(RocketDto rocketDto) {
-        if (rocketDto.getCapacity() > 10) {
-            throw new IllegalArgumentException("Rocket capacity over 10");
-        }
     }
 
     private Rocket dtoToRocket(RocketDto rocketDto) {
         Rocket rocket = new Rocket();
         rocket.setId(rocketDto.getId());
         rocket.setName(rocketDto.getName());
-        rocket.setCapacity(rocketDto.getCapacity());
-        rocket.setSpeed(rocketDto.getSpeed());
+        rocket.setCapacity(new RocketCapacity(rocketDto.getCapacity()));
+        rocket.setSpeed(new RocketSpeed(rocketDto.getSpeed()));
         return rocket;
     }
 

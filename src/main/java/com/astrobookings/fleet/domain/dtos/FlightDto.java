@@ -1,6 +1,6 @@
 package com.astrobookings.fleet.domain.dtos;
 
-import com.astrobookings.fleet.domain.models.FlightStatus;
+import com.astrobookings.fleet.domain.models.flight.FlightStatus;
 
 import java.time.LocalDateTime;
 
