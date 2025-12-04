@@ -1,10 +1,5 @@
 package com.astrobookings.sales.domain;
 
-import com.astrobookings.fleet.domain.models.Flight;
-import com.astrobookings.fleet.domain.models.FlightStatus;
-import com.astrobookings.fleet.domain.models.Rocket;
-import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
-import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
 import com.astrobookings.sales.domain.dtos.BookingDto;
 import com.astrobookings.sales.domain.dtos.FlightInfoDto;
 import com.astrobookings.sales.domain.models.Booking;

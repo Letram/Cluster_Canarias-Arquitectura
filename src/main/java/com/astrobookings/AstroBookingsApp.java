@@ -36,7 +36,7 @@ public class AstroBookingsApp {
         RocketUseCases rocketUseCases = FleetUseCasesFactory.getRocketUseCases(rocketRepository);
         FlightUseCases flightUseCases = FleetUseCasesFactory.getFlightUseCases(flightRepository, rocketRepository);
         BookingUseCases bookingUseCases = SalesUseCasesFactory.getBookingUseCases(bookingRepository, fip);
-        CancellationUseCases cancellationUseCases = SalesUseCasesFactory.getCancellationUseCases(flightRepository, bookingRepository);
+        CancellationUseCases cancellationUseCases = SalesUseCasesFactory.getCancellationUseCases(fip);
 
         // Register handlers for endpoints
         server.createContext("/rockets", new RocketHandler(rocketUseCases));

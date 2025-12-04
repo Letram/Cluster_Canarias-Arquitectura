@@ -15,7 +15,7 @@ public class SalesUseCasesFactory {
         return new BookingService(fip, brp);
     }
 
-    public static CancellationUseCases getCancellationUseCases(FlightRepositoryPort frp, BookingRepositoryPort brp) {
-        return new CancellationService(frp, brp);
+    public static CancellationUseCases getCancellationUseCases(FlightInfoProvider fip) {
+        return new CancellationService(fip);
     }
 }

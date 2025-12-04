@@ -1,9 +1,6 @@
 package com.astrobookings.sales.domain.ports.output;
 
 import com.astrobookings.sales.domain.dtos.FlightInfoDto;
-import com.astrobookings.sales.domain.models.Booking;
-
-import java.util.List;
 
 public interface FlightInfoProvider {
 
@@ -18,4 +15,6 @@ public interface FlightInfoProvider {
     boolean isFlightCancelled(String status);
 
     boolean isFlightSoldOut(String status);
+
+    int cancelAllFlights();
 }

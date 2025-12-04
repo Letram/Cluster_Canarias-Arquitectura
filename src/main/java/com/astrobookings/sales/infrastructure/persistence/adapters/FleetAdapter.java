@@ -6,20 +6,28 @@ import com.astrobookings.fleet.domain.models.FlightStatus;
 import com.astrobookings.fleet.domain.models.Rocket;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
+import com.astrobookings.sales.domain.PaymentGateway;
 import com.astrobookings.sales.domain.dtos.FlightInfoDto;
+import com.astrobookings.sales.domain.models.Booking;
 import com.astrobookings.sales.domain.ports.output.BookingRepositoryPort;
 import com.astrobookings.sales.domain.ports.output.FlightInfoProvider;
+import com.astrobookings.sales.domain.ports.output.NotificationUseCases;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class FleetAdapter implements FlightInfoProvider {
     private final FlightRepositoryPort flightRepositoryPort;
     private final RocketRepositoryPort rocketRepositoryPort;
+    private final BookingRepositoryPort bookingRepositoryPort;
 
     public FleetAdapter(FlightRepositoryPort flightRepositoryPort,
-                        RocketRepositoryPort rocketRepositoryPort) {
+                        RocketRepositoryPort rocketRepositoryPort,
+                        BookingRepositoryPort bookingRepositoryPort) {
         this.flightRepositoryPort = flightRepositoryPort;
         this.rocketRepositoryPort = rocketRepositoryPort;
+        this.bookingRepositoryPort = bookingRepositoryPort;
     }
 
     @Override
@@ -47,12 +55,12 @@ public class FleetAdapter implements FlightInfoProvider {
     @Override
     public void markFlightAsConfirmed(String flightId) {
         flightRepositoryPort.findAll().stream()
-            .filter(f -> f.getId().equals(flightId))
-            .findFirst()
-            .ifPresent(flight -> {
-                flight.setStatus(FlightStatus.CONFIRMED);
-                flightRepositoryPort.save(flight);
-            });
+                .filter(f -> f.getId().equals(flightId))
+                .findFirst()
+                .ifPresent(flight -> {
+                    flight.setStatus(FlightStatus.CONFIRMED);
+                    flightRepositoryPort.save(flight);
+                });
     }
 
     @Override
@@ -63,6 +71,39 @@ public class FleetAdapter implements FlightInfoProvider {
     @Override
     public boolean isFlightSoldOut(String status) {
         return status.equalsIgnoreCase(FlightStatus.SOLD_OUT.name());
+    }
+
+    @Override
+    public int cancelAllFlights() {
+        List<Flight> flights = flightRepositoryPort.findAll();
+        int cancelledCount = 0;
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Flight flight : flights) {
+            if (flight.getStatus() == FlightStatus.SCHEDULED) {
+                long daysUntilDeparture = ChronoUnit.DAYS.between(now, flight.getDepartureDate());
+                if (daysUntilDeparture <= 7) {
+                    List<Booking> bookings = bookingRepositoryPort.findByFlightId(flight.getId());
+                    if (bookings.size() < flight.getMinPassengers()) {
+                        // Cancel flight
+                        System.out.println("[CANCELLATION SERVICE] Cancelling flight " + flight.getId() + " - Only "
+                                + bookings.size() + "/5 passengers, departing in " + daysUntilDeparture + " days");
+                        flight.setStatus(FlightStatus.CANCELLED);
+                        flightRepositoryPort.save(flight);
+
+                        // Refund bookings
+                        for (Booking booking : bookings) {
+                            PaymentGateway.processRefund(booking.getPaymentTransactionId(), booking.getFinalPrice());
+                        }
+
+                        // Notify
+                        NotificationUseCases.notifyCancellation(flight.getId(), bookings);
+                        cancelledCount++;
+                    }
+                }
+            }
+        }
+        return cancelledCount;
     }
 
     private FlightInfoDto flightToFlightInfoDto(Flight flight) {
