@@ -1,10 +1,10 @@
 package com.astrobookings.sales.domain.ports.output;
 
-import com.astrobookings.sales.domain.dtos.FlightInfoDto;
+import com.astrobookings.sales.domain.models.flight.SalesFlight;
 
 public interface FlightInfoProvider {
 
-    FlightInfoDto getFlightById(String flightId);
+    SalesFlight getFlightById(String flightId);
 
     void markFlightAsSoldOut(String flightId);
 

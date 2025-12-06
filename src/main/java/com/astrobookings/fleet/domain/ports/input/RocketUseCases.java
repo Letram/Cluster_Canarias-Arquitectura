@@ -1,11 +1,11 @@
 package com.astrobookings.fleet.domain.ports.input;
 
-import com.astrobookings.fleet.domain.dtos.RocketDto;
+import com.astrobookings.fleet.domain.models.rocket.FleetRocket;
 
 import java.util.List;
 
 public interface RocketUseCases {
-    List<RocketDto> getAllRockets();
+    List<FleetRocket> getAllRockets();
 
-    RocketDto createRocket(RocketDto rocketDto);
+    FleetRocket createRocket(FleetRocket rocketDto);
 }

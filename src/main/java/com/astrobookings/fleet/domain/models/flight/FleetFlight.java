@@ -1,22 +1,24 @@
 package com.astrobookings.fleet.domain.models.flight;
 
+import com.astrobookings.fleet.domain.models.rocket.FleetRocket;
+import com.astrobookings.shared.domain.models.FlightStatus;
+
 import java.time.LocalDateTime;
 
-public class Flight {
+public class FleetFlight {
     private String id;
-    private String rocketId;
+    private FleetRocket rocket;
     private FlightDepartureDate departureDate;
     private FlightPrice basePrice;
     private FlightStatus status;
     private FlightPassengers minPassengers;
 
-    public Flight() {
+    public FleetFlight() {
     }
 
-    public Flight(String id, String rocketId, FlightDepartureDate departureDate, FlightPrice basePrice, FlightStatus status,
-                  FlightPassengers minPassengers) {
+    public FleetFlight(String id, FlightDepartureDate departureDate, FlightPrice basePrice, FlightStatus status,
+                       FlightPassengers minPassengers) {
         this.id = id;
-        this.rocketId = rocketId;
         this.departureDate = departureDate;
         this.basePrice = basePrice;
         this.status = status;
@@ -31,14 +33,6 @@ public class Flight {
         this.id = id;
     }
 
-    public String getRocketId() {
-        return rocketId;
-    }
-
-    public void setRocketId(String rocketId) {
-        this.rocketId = rocketId;
-    }
-
     public LocalDateTime getDepartureDate() {
         return departureDate.value();
     }
@@ -47,8 +41,8 @@ public class Flight {
         this.departureDate = departureDate;
     }
 
-    public FlightPrice getBasePrice() {
-        return basePrice;
+    public double getBasePrice() {
+        return basePrice.price();
     }
 
     public void setBasePrice(FlightPrice basePrice) {
@@ -70,5 +64,25 @@ public class Flight {
 
     public void setMinPassengers(FlightPassengers minPassengers) {
         this.minPassengers = minPassengers;
+    }
+
+    public FleetRocket getRocket() {
+        return rocket;
+    }
+
+    public void setRocket(FleetRocket rocket) {
+        this.rocket = rocket;
+    }
+
+    public void cancel() {
+        this.status = FlightStatus.CANCELLED;
+    }
+
+    public void sold() {
+        this.status = FlightStatus.SOLD_OUT;
+    }
+
+    public void confirm() {
+        this.status = FlightStatus.CONFIRMED;
     }
 }

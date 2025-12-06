@@ -1,6 +1,6 @@
 package com.astrobookings.sales.domain.ports.output;
 
-import com.astrobookings.sales.domain.models.Booking;
+import com.astrobookings.sales.domain.models.booking.SalesBooking;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ public interface NotificationUseCases {
                 "[NOTIFICATION SERVICE] Flight " + flightId + " CANCELLED - Notifying " + passengerCount + " passenger(s)");
     }
 
-    static void notifyCancellation(String flightId, List<Booking> bookings) {
+    static void notifyCancellation(String flightId, List<SalesBooking> bookings) {
         System.out.println(
                 "[NOTIFICATION SERVICE] Flight " + flightId + " CANCELLED - Notifying " + bookings.size() + " passenger(s)");
-        for (Booking booking : bookings) {
+        for (SalesBooking booking : bookings) {
             System.out.println("[NOTIFICATION SERVICE] Sending cancellation email to " + booking.getPassengerName()
                     + " (Booking: " + booking.getId() + ", Refund: $" + booking.getFinalPrice() + ")");
         }

@@ -1,15 +1,15 @@
 package com.astrobookings.sales.domain.ports.output;
 
-import com.astrobookings.sales.domain.models.Booking;
+import com.astrobookings.sales.domain.models.booking.SalesBooking;
 
 import java.util.List;
 
 public interface BookingRepositoryPort {
-    List<Booking> findAll();
+    List<SalesBooking> findAll();
 
-    List<Booking> findByFlightId(String flightId);
+    List<SalesBooking> findByFlightId(String flightId);
 
-    List<Booking> findByPassengerName(String passengerName);
+    List<SalesBooking> findByPassengerName(String passengerName);
 
-    Booking save(Booking booking);
+    SalesBooking save(SalesBooking booking);
 }

@@ -1,11 +1,11 @@
 package com.astrobookings.fleet.domain.ports.input;
 
-import com.astrobookings.fleet.domain.dtos.FlightDto;
+import com.astrobookings.fleet.domain.models.flight.FleetFlight;
 
 import java.util.List;
 
 public interface FlightUseCases {
-    List<FlightDto> getFlights(String statusFilter);
+    List<FleetFlight> getFlights(String statusFilter);
 
-    FlightDto createFlight(FlightDto flightDto);
+    FleetFlight createFlight(FleetFlight flight);
 }

@@ -1,8 +1,10 @@
 package com.astrobookings.fleet.infrastructure.presentation;
 
-import com.astrobookings.fleet.domain.dtos.FlightDto;
+import com.astrobookings.fleet.domain.models.flight.FleetFlight;
 import com.astrobookings.fleet.domain.ports.input.FlightUseCases;
+import com.astrobookings.fleet.infrastructure.presentation.models.HTTPFlight;
 import com.astrobookings.shared.infrastructure.presentation.BaseHandler;
+import com.astrobookings.shared.infrastructure.presentation.mappers.DomainMapper;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -13,9 +15,11 @@ import java.util.Map;
 
 public class FlightHandler extends BaseHandler {
     private final FlightUseCases flightUseCases;
+    private final DomainMapper<FleetFlight, HTTPFlight> domainMapper;
 
-    public FlightHandler(FlightUseCases flightUseCases) {
+    public FlightHandler(FlightUseCases flightUseCases, DomainMapper<FleetFlight, HTTPFlight> domainMapper) {
         this.flightUseCases = flightUseCases;
+        this.domainMapper = domainMapper;
     }
 
     @Override
@@ -61,14 +65,14 @@ public class FlightHandler extends BaseHandler {
             // Parse JSON body
             InputStream is = exchange.getRequestBody();
             String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            FlightDto flight = this.objectMapper.readValue(body, FlightDto.class);
+            HTTPFlight flight = this.objectMapper.readValue(body, HTTPFlight.class);
 
             String error = validateFlight(flight);
             if (error != null) {
                 statusCode = 400;
                 response = "{\"error\": \"" + error + "\"}";
             } else {
-                FlightDto saved = flightUseCases.createFlight(flight);
+                FleetFlight saved = flightUseCases.createFlight(domainMapper.toDomain(flight));
                 response = this.objectMapper.writeValueAsString(saved);
             }
 
@@ -81,6 +85,7 @@ public class FlightHandler extends BaseHandler {
             }
             response = "{\"error\": \"" + error + "\"}";
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             statusCode = 400;
             response = "{\"error\": \"Invalid JSON or request\"}";
         }
@@ -88,11 +93,11 @@ public class FlightHandler extends BaseHandler {
         sendResponse(exchange, statusCode, response);
     }
 
-    private String validateFlight(FlightDto flight) {
-        if (flight.getRocketId() == null || flight.getRocketId().trim().isEmpty()) {
+    private String validateFlight(HTTPFlight flight) {
+        if (flight.rocket().id() == null) {
             return "Rocket ID must be provided";
         }
-        if (flight.getDepartureDate() == null) {
+        if (flight.departureDate() == null) {
             return "Departure date must be provided";
         }
 

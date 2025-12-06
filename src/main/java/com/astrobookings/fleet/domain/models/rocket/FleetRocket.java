@@ -1,15 +1,15 @@
 package com.astrobookings.fleet.domain.models.rocket;
 
-public class Rocket {
+public class FleetRocket {
     private String id;
     private String name;
     private RocketCapacity capacity;
     private RocketSpeed speed;
 
-    public Rocket() {
+    public FleetRocket() {
     }
 
-    public Rocket(String id, String name, RocketCapacity capacity, RocketSpeed speed) {
+    public FleetRocket(String id, String name, RocketCapacity capacity, RocketSpeed speed) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;

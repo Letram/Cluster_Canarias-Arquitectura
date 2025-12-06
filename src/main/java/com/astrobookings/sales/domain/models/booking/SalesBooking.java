@@ -1,18 +1,19 @@
-package com.astrobookings.sales.domain.models;
+package com.astrobookings.sales.domain.models.booking;
 
-public class Booking {
+import com.astrobookings.sales.domain.models.flight.SalesFlight;
+
+public class SalesBooking {
     private String id;
-    private String flightId;
+    private SalesFlight flight;
     private String passengerName;
-    private double finalPrice;
+    private SalesBookingPrice finalPrice;
     private String paymentTransactionId;
 
-    public Booking() {
+    public SalesBooking() {
     }
 
-    public Booking(String id, String flightId, String passengerName, double finalPrice, String paymentTransactionId) {
+    public SalesBooking(String id, String passengerName, SalesBookingPrice finalPrice, String paymentTransactionId) {
         this.id = id;
-        this.flightId = flightId;
         this.passengerName = passengerName;
         this.finalPrice = finalPrice;
         this.paymentTransactionId = paymentTransactionId;
@@ -26,14 +27,6 @@ public class Booking {
         this.id = id;
     }
 
-    public String getFlightId() {
-        return flightId;
-    }
-
-    public void setFlightId(String flightId) {
-        this.flightId = flightId;
-    }
-
     public String getPassengerName() {
         return passengerName;
     }
@@ -43,10 +36,10 @@ public class Booking {
     }
 
     public double getFinalPrice() {
-        return finalPrice;
+        return finalPrice.value();
     }
 
-    public void setFinalPrice(double finalPrice) {
+    public void setFinalPrice(SalesBookingPrice finalPrice) {
         this.finalPrice = finalPrice;
     }
 
@@ -56,5 +49,13 @@ public class Booking {
 
     public void setPaymentTransactionId(String paymentTransactionId) {
         this.paymentTransactionId = paymentTransactionId;
+    }
+
+    public SalesFlight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(SalesFlight flight) {
+        this.flight = flight;
     }
 }

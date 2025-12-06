@@ -1,13 +1,13 @@
 package com.astrobookings.fleet.domain.ports.output;
 
-import com.astrobookings.fleet.domain.models.flight.Flight;
+import com.astrobookings.fleet.domain.models.flight.FleetFlight;
 
 import java.util.List;
 
 public interface FlightRepositoryPort {
-    List<Flight> findAll();
+    List<FleetFlight> findAll();
 
-    List<Flight> findByStatus(String status);
+    List<FleetFlight> findByStatus(String status);
 
-    Flight save(Flight flight);
+    FleetFlight save(FleetFlight flight);
 }

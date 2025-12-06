@@ -1,15 +1,13 @@
 package com.astrobookings.sales.domain;
 
-import com.astrobookings.sales.domain.dtos.BookingDto;
-import com.astrobookings.sales.domain.dtos.FlightInfoDto;
-import com.astrobookings.sales.domain.models.Booking;
+import com.astrobookings.sales.domain.models.booking.SalesBooking;
+import com.astrobookings.sales.domain.models.booking.SalesBookingPrice;
+import com.astrobookings.sales.domain.models.flight.SalesFlight;
 import com.astrobookings.sales.domain.ports.input.BookingUseCases;
 import com.astrobookings.sales.domain.ports.output.BookingRepositoryPort;
 import com.astrobookings.sales.domain.ports.output.FlightInfoProvider;
 import com.astrobookings.sales.domain.ports.output.NotificationUseCases;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class BookingService implements BookingUseCases {
@@ -22,81 +20,48 @@ public class BookingService implements BookingUseCases {
     }
 
     @Override
-    public BookingDto createBooking(String flightId, String passengerName) throws Exception {
+    public SalesBooking createBooking(String flightId, String passengerName) throws Exception {
 
-        FlightInfoDto flightInfoDto = flightInfoProvider.getFlightById(flightId);
+        SalesFlight salesFlight = flightInfoProvider.getFlightById(flightId);
 
-        if (flightInfoDto == null) {
+        if (salesFlight == null) {
             throw new IllegalArgumentException("Flight not found");
         }
 
-        // Check flight status
-        if (flightInfoProvider.isFlightCancelled(flightInfoDto.getStatus())
-                || flightInfoProvider.isFlightSoldOut(flightInfoDto.getStatus())) {
+        if (!salesFlight.isAvailableForBooking()) {
             throw new IllegalArgumentException("Flight is not available for booking");
         }
 
-        int capacity = flightInfoDto.getRocketCapacity();
-
-        // Count current bookings
-        List<Booking> existingBookings = bookingRepositoryPort.findByFlightId(flightId);
-        int currentBookings = existingBookings.size();
-
-        if (currentBookings >= capacity) {
-            throw new IllegalArgumentException("Flight is sold out");
-        }
-
-        // Calculate discount
-        double discount = calculateDiscount(flightInfoDto, currentBookings, capacity);
-
         // Final price
-        double finalPrice = flightInfoDto.getBasePrice() * (1 - discount);
+        double finalPrice = salesFlight.getFinalPrice();
 
         // Process payment
         String transactionId = PaymentGateway.processPayment(finalPrice);
 
         // Create booking
-        Booking booking = new Booking();
-        booking.setFlightId(flightId);
+        SalesBooking booking = new SalesBooking();
+        booking.setFlight(salesFlight);
         booking.setPassengerName(passengerName);
-        booking.setFinalPrice(finalPrice);
+        booking.setFinalPrice(new SalesBookingPrice(finalPrice));
         booking.setPaymentTransactionId(transactionId);
-        Booking savedBooking = bookingRepositoryPort.save(booking);
 
-        // Update flight status
-        currentBookings++;
-        if (currentBookings >= capacity) {
+        SalesBooking savedBooking = bookingRepositoryPort.save(booking);
+
+        salesFlight.setCurrentPassengers(salesFlight.getCurrentPassengers() + 1);
+
+        if (salesFlight.canBeMarkedAsSoldOut()) {
             flightInfoProvider.markFlightAsSoldOut(flightId);
-        } else if (currentBookings >= flightInfoDto.getMinPassengers() && flightInfoProvider.isFlightScheduled(flightInfoDto.getStatus())) {
+        } else if (salesFlight.canBeConfirmed()) {
             flightInfoProvider.markFlightAsConfirmed(flightId);
-            NotificationUseCases.notifyConfirmation(flightId, currentBookings);
+            NotificationUseCases.notifyConfirmation(flightId, salesFlight.getCurrentPassengers());
         }
 
-        // Return JSON (mixing responsibility)
-        return bookingToDto(savedBooking);
-    }
-
-    private double calculateDiscount(FlightInfoDto flight, int currentBookings, int capacity) {
-        LocalDateTime now = LocalDateTime.now();
-        long daysUntilDeparture = ChronoUnit.DAYS.between(now, flight.getDepartureDate());
-
-        // Precedence: only one discount
-        if (currentBookings + 1 == capacity) {
-            return 0.0; // Last seat, no discount
-        } else if (currentBookings + 1 == flight.getMinPassengers()) {
-            return 0.3; // One short of min, 30% off
-        } else if (daysUntilDeparture > 180) {
-            return 0.1; // >6 months, 10% off
-        } else if (daysUntilDeparture >= 7 && daysUntilDeparture <= 30) {
-            return 0.2; // 1 month to 1 week, 20% off
-        } else {
-            return 0.0; // No discount
-        }
+        return savedBooking;
     }
 
     @Override
-    public List<BookingDto> getBookings(String flightId, String passengerName) {
-        List<Booking> bookings;
+    public List<SalesBooking> getBookings(String flightId, String passengerName) {
+        List<SalesBooking> bookings;
         if (flightId != null && !flightId.isEmpty()) {
             bookings = bookingRepositoryPort.findByFlightId(flightId);
             if (passengerName != null && !passengerName.isEmpty()) {
@@ -110,18 +75,7 @@ public class BookingService implements BookingUseCases {
             bookings = bookingRepositoryPort.findAll();
         }
 
-        return bookings.stream()
-                .map(this::bookingToDto)
-                .collect(java.util.stream.Collectors.toList());
+        return bookings;
     }
 
-    private BookingDto bookingToDto(Booking booking) {
-        BookingDto bookingDto = new BookingDto();
-        bookingDto.setId(booking.getId());
-        bookingDto.setFlightId(booking.getFlightId());
-        bookingDto.setPassengerName(booking.getPassengerName());
-        bookingDto.setFinalPrice(booking.getFinalPrice());
-        bookingDto.setPaymentTransactionId(booking.getPaymentTransactionId());
-        return bookingDto;
-    }
 }

@@ -98,7 +98,3 @@ Por otro lado, también tenemos:
 - Anticorruption Layer: Un contexto utiliza una capa de anticorrupción para interactuar con otro contexto sin verse afectado por sus modelos o reglas. Estas relaciones ayudan a definir cómo los diferentes contextos interactúan y colaboran dentro de un sistema más grande, manteniendo la integridad y coherencia de cada dominio.
 
 ---
-
-# Pasos a realizar en esta práctica 5
-
-- Dividir el dominio en 2 subdominio: core y supportive. El core será el dominio principal (bookings) y el supportive será el que le da soporte (rockets y flights).

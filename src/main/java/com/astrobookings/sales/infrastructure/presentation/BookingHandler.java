@@ -1,7 +1,10 @@
 package com.astrobookings.sales.infrastructure.presentation;
 
+import com.astrobookings.sales.domain.models.booking.SalesBooking;
 import com.astrobookings.sales.domain.ports.input.BookingUseCases;
+import com.astrobookings.sales.infrastructure.presentation.models.HTTPBooking;
 import com.astrobookings.shared.infrastructure.presentation.BaseHandler;
+import com.astrobookings.shared.infrastructure.presentation.mappers.DomainMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -9,14 +12,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 public class BookingHandler extends BaseHandler {
 
+    private final DomainMapper<SalesBooking, HTTPBooking> domainMapper;
     private final BookingUseCases bookingUseCases;
 
-    public BookingHandler(BookingUseCases bookingUseCases) {
+    public BookingHandler(BookingUseCases bookingUseCases, DomainMapper<SalesBooking, HTTPBooking> domainMapper) {
         this.bookingUseCases = bookingUseCases;
+        this.domainMapper = domainMapper;
     }
 
     @Override
@@ -47,7 +53,8 @@ public class BookingHandler extends BaseHandler {
                 passengerName = params.get("passengerName");
             }
 
-            response = this.objectMapper.writeValueAsString(bookingUseCases.getBookings(flightId, passengerName));
+            List<SalesBooking> bookings = this.bookingUseCases.getBookings(flightId, passengerName);
+            response = this.objectMapper.writeValueAsString(bookings.stream().map(domainMapper::toInfrastructure));
         } catch (Exception e) {
             statusCode = 500;
             response = "{\"error\": \"Internal server error\"}";

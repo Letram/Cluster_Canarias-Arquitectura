@@ -1,10 +1,11 @@
 package com.astrobookings.fleet.domain;
 
-import com.astrobookings.fleet.domain.dtos.FlightDto;
-import com.astrobookings.fleet.domain.models.flight.*;
+import com.astrobookings.fleet.domain.models.flight.FleetFlight;
+import com.astrobookings.fleet.domain.models.flight.FlightPassengers;
 import com.astrobookings.fleet.domain.ports.input.FlightUseCases;
 import com.astrobookings.fleet.domain.ports.output.FlightRepositoryPort;
 import com.astrobookings.fleet.domain.ports.output.RocketRepositoryPort;
+import com.astrobookings.shared.domain.models.FlightStatus;
 
 import java.util.List;
 
@@ -18,19 +19,16 @@ public class FlightService implements FlightUseCases {
     }
 
     @Override
-    public List<FlightDto> getFlights(String statusFilter) {
+    public List<FleetFlight> getFlights(String statusFilter) {
         if (statusFilter != null && !statusFilter.isEmpty()) {
-            return flightRepositoryPort.findByStatus(statusFilter).stream().map(this::flightToDto).toList();
+            return flightRepositoryPort.findByStatus(statusFilter).stream().toList();
         } else {
-            return flightRepositoryPort.findAll().stream().map(this::flightToDto).toList();
+            return flightRepositoryPort.findAll().stream().toList();
         }
     }
 
     @Override
-    public FlightDto createFlight(FlightDto flightDto) {
-
-        // dto -> model
-        Flight flight = dtoToFlight(flightDto);
+    public FleetFlight createFlight(FleetFlight flight) {
 
         // Set defaults
         flight.setStatus(FlightStatus.SCHEDULED);
@@ -42,43 +40,17 @@ public class FlightService implements FlightUseCases {
             throw new IllegalArgumentException(error);
         }
 
-        // Save
-        Flight savedFlight = flightRepositoryPort.save(flight);
-        return flightToDto(savedFlight);
+        return flightRepositoryPort.save(flight);
     }
 
-    private String validateFlight(Flight flight) {
+    private String validateFlight(FleetFlight flight) {
 
         // Business validations
-        if (rocketRepositoryPort.findAll().stream().noneMatch(r -> r.getId().equals(flight.getRocketId()))) {
-            return "Rocket with id " + flight.getRocketId() + " does not exist";
+        if (rocketRepositoryPort.findAll().stream().noneMatch(r -> r.getId().equals(flight.getRocket().getId()))) {
+            return "Rocket with id " + flight.getRocket().getId() + " does not exist";
         }
 
         return null;
     }
-
-    private FlightDto flightToDto(Flight flight) {
-        FlightDto flightDto = new FlightDto();
-        flightDto.setId(flight.getId());
-        flightDto.setRocketId(flight.getRocketId());
-        flightDto.setDepartureDate(flight.getDepartureDate());
-        flightDto.setBasePrice(flight.getBasePrice().price());
-        flightDto.setMinPassengers(flight.getMinPassengers());
-        flightDto.setStatus(flight.getStatus());
-        return flightDto;
-    }
-
-    private Flight dtoToFlight(FlightDto flightDto) {
-        Flight flight = new Flight();
-        flight.setId(flightDto.getId());
-        flight.setRocketId(flightDto.getRocketId());
-        flight.setDepartureDate(new FlightDepartureDate(flightDto.getDepartureDate()));
-        FlightPrice price = new FlightPrice(flightDto.getBasePrice());
-        flight.setBasePrice(price);
-        flight.setMinPassengers(new FlightPassengers(flightDto.getMinPassengers()));
-        flight.setStatus(flightDto.getStatus());
-        return flight;
-    }
-
 
 }

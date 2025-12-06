@@ -1,11 +1,13 @@
 package com.astrobookings.fleet.domain.ports.output;
 
-import com.astrobookings.fleet.domain.models.rocket.Rocket;
+import com.astrobookings.fleet.domain.models.rocket.FleetRocket;
 
 import java.util.List;
 
 public interface RocketRepositoryPort {
-    List<Rocket> findAll();
+    List<FleetRocket> findAll();
 
-    Rocket save(Rocket rocket);
+    FleetRocket save(FleetRocket rocket);
+
+    FleetRocket findbyId(String rocketId);
 }

@@ -1,8 +1,10 @@
 package com.astrobookings.fleet.infrastructure.presentation;
 
-import com.astrobookings.fleet.domain.dtos.RocketDto;
+import com.astrobookings.fleet.domain.models.rocket.FleetRocket;
 import com.astrobookings.fleet.domain.ports.input.RocketUseCases;
+import com.astrobookings.fleet.infrastructure.presentation.models.HTTPRocket;
 import com.astrobookings.shared.infrastructure.presentation.BaseHandler;
+import com.astrobookings.shared.infrastructure.presentation.mappers.DomainMapper;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -13,10 +15,13 @@ import java.util.List;
 public class RocketHandler extends BaseHandler {
 
     private final RocketUseCases rocketUseCases;
+    private final DomainMapper<FleetRocket, HTTPRocket> domainMapper;
+
     private HttpExchange exchange;
 
-    public RocketHandler(RocketUseCases rocketUseCases) {
+    public RocketHandler(RocketUseCases rocketUseCases, DomainMapper<FleetRocket, HTTPRocket> domainMapper) {
         this.rocketUseCases = rocketUseCases;
+        this.domainMapper = domainMapper;
     }
 
     @Override
@@ -39,7 +44,10 @@ public class RocketHandler extends BaseHandler {
 
         try {
 
-            List<RocketDto> rockets = rocketUseCases.getAllRockets();
+            List<HTTPRocket> rockets = rocketUseCases
+                    .getAllRockets()
+                    .stream().map(domainMapper::toInfrastructure)
+                    .toList();
 
             response = this.objectMapper.writeValueAsString(rockets);
         } catch (Exception e) {
@@ -59,7 +67,7 @@ public class RocketHandler extends BaseHandler {
             InputStream is = exchange.getRequestBody();
             String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
-            RocketDto rocket = this.objectMapper.readValue(body, RocketDto.class);
+            HTTPRocket rocket = this.objectMapper.readValue(body, HTTPRocket.class);
 
             // Business validations mixed with input validation
             String error = validateRocket(rocket);
@@ -67,7 +75,7 @@ public class RocketHandler extends BaseHandler {
                 statusCode = 400;
                 response = "{\"error\": \"" + error + "\"}";
             } else {
-                RocketDto saved = rocketUseCases.createRocket(rocket);
+                FleetRocket saved = rocketUseCases.createRocket(domainMapper.toDomain(rocket));
                 statusCode = 201;
                 response = this.objectMapper.writeValueAsString(saved);
             }
@@ -79,8 +87,8 @@ public class RocketHandler extends BaseHandler {
         sendResponse(exchange, statusCode, response);
     }
 
-    private String validateRocket(RocketDto rocket) {
-        if (rocket.getName() == null || rocket.getName().trim().isEmpty()) {
+    private String validateRocket(HTTPRocket rocket) {
+        if (rocket.name() == null || rocket.name().trim().isEmpty()) {
             return "Rocket name must be provided";
         }
         // Speed is optional, no validation
